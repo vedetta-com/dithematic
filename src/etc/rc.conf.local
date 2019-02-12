@@ -1,6 +1,6 @@
 check_quotas=NO
 nsd_flags=
 pkg_scripts=pdns_server
-slaacd_flags=NO
+#slaacd_flags=NO
 sndiod_flags=NO
 unbound_flags=
