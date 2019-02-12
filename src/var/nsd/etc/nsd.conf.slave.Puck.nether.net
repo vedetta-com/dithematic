@@ -1,0 +1,6 @@
+	# Puck.nether.net slave
+	provide-xfr: 204.42.254.5 NOKEY
+	provide-xfr: 2001:418:3f4::5 NOKEY
+	notify: 204.42.254.5 NOKEY
+	notify: 2001:418:3f4::5 NOKEY
+

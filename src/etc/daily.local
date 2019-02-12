@@ -1,0 +1,13 @@
+next_part "Checking local special files and directories:"
+if [ -O /etc/mtree/special.local -a \
+     -G /etc/mtree/special.local -a \
+   ! -L /etc/mtree/special.local -a \
+     -r /etc/mtree/special.local -a \
+     -w /etc/mtree/special.local -a \
+   ! -x /etc/mtree/special.local ]; then
+	echo "\tcriteria (shouldbe, reallyis)"
+	mtree -e -p / -f /etc/mtree/special.local
+fi
+
+next_part "DNS statistics:"
+unbound-control stats

@@ -1,0 +1,48 @@
+example.com.	86400	IN	SOA	dot.example.com. hostmaster.example.com.  ( 2018142333 28800 7200 604800 86400 )
+example.com.	86400	IN	NS	dig.example.com.
+example.com.	86400	IN	NS	dot.example.com.
+example.com.	86400	IN	MX	10 mercury.example.com.
+example.com.	86400	IN	MX	20 hermes.example.com.
+example.com.	86400	IN	TXT	"v=spf1 mx:example.com -all"
+example.com.	86400	IN	CAA	128 issue "example.com"
+example.com.	86400	IN	CAA	128 issue "letsencrypt.org"
+example.com.	86400	IN	CAA	128 issuewild ";"
+example.com.	86400	IN	ALIAS	web.example.com.
+www.example.com.	86400	IN	CNAME	example.com.
+web.example.com.	86400	IN	A	203.0.113.5
+web.example.com.	86400	IN	TXT	"v=spf1 -all"
+web.example.com.	86400	IN	AAAA	2001:0db8::5
+web.example.com.	86400	IN	SSHFP	4 1 edit
+web.example.com.	86400	IN	SSHFP	4 2 edit
+dig.example.com.	86400	IN	A	203.0.113.4
+dig.example.com.	86400	IN	TXT	"v=spf1 -all"
+dig.example.com.	86400	IN	AAAA	2001:0db8::4
+dig.example.com.	86400	IN	SSHFP	4 1 edit
+dig.example.com.	86400	IN	SSHFP	4 2 edit
+dot.example.com.	86400	IN	A	203.0.113.3
+dot.example.com.	86400	IN	TXT	"v=spf1 -all"
+dot.example.com.	86400	IN	AAAA	2001:0db8::3
+dot.example.com.	86400	IN	SSHFP	4 1 edit
+dot.example.com.	86400	IN	SSHFP	4 2 edit
+hermes.example.com.	86400	IN	A	203.0.113.2
+hermes.example.com.	86400	IN	TXT	"v=spf1 a -all"
+hermes.example.com.	86400	IN	AAAA	2001:0db8::2
+hermes.example.com.	86400	IN	SSHFP	4 1 edit
+hermes.example.com.	86400	IN	SSHFP	4 2 edit
+mercury.example.com.	86400	IN	A	203.0.113.1
+mercury.example.com.	86400	IN	TXT	"v=spf1 a -all"
+mercury.example.com.	86400	IN	AAAA	2001:0db8::1
+mercury.example.com.	86400	IN	SSHFP	4 1 edit
+mercury.example.com.	86400	IN	SSHFP	4 2 edit
+_pop3._tcp.example.com.	86400	IN	SRV	0 0 0 .
+_submission._tcp.example.com.	86400	IN	SRV	0 1 587 mercury.example.com.
+_imap._tcp.example.com.	86400	IN	SRV	0 0 0 .
+_pop3s._tcp.example.com.	86400	IN	SRV	0 0 0 .
+_imaps._tcp.example.com.	86400	IN	SRV	0 1 993 mercury.example.com.
+_openpgpkey._tcp.example.com.	86400	IN	SRV	0 0 443 wkd.example.com.
+obsd._domainkey.example.com.	86400	IN	TXT	"v=DKIM1; k=rsa; p=edit"
+_dmarc.example.com.	86400	IN	TXT	"v=DMARC1; p=reject; pct=100; rua=mailto:dmarcreports@example.com"
+autoconfig.example.com.	86400	IN	CNAME	mercury.example.com.
+wkd.example.com.	86400	IN	CNAME	mercury.example.com.
+ddns.example.com.	86400	IN	NS	dig.example.com.
+ddns.example.com.	86400	IN	NS	dot.example.com.

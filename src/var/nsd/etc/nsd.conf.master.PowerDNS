@@ -1,0 +1,6 @@
+	# PowerDNS master
+	request-xfr: 127.0.0.1@20053 tsig.dithematic.com.
+	request-xfr: ::1@20053 tsig.dithematic.com.
+	allow-notify: 127.0.0.1 tsig.dithematic.com.
+	allow-notify: ::1 tsig.dithematic.com.
+

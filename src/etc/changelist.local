@@ -1,0 +1,28 @@
+# changelist.local
+#
+# Backup: `cp -p /etc/changelist /etc/changelist-6.4`
+# Install: `cat /etc/changelist.local >> /etc/changelist`
+# Uninstall: `sed -i '/changelist.local/,$d' /etc/changelist`
+# Remove: `/usr/local/bin/rmchangelist.sh`
+
+/etc/changelist.local
++/etc/mail/secrets
+/etc/pf.conf.anchor.block
+/etc/pf.conf.anchor.icmp
+/etc/pf.conf.table.ban
+/etc/pf.conf.table.martians
+/etc/pf.conf.table.msa
+/etc/pf.conf.table.slavedns
+/etc/motd.authpf
+/etc/authpf/authpf.*
+/etc/pdns/pdns.conf
+/etc/pdns/dnssec/*.DNSKEY
++/etc/pdns/dnssec/*.*SK
+/etc/ssh/sshd_banner
++/var/unbound/db/root.key
++/var/unbound/db/root.zone
+/usr/local/bin/pdnsb.sh
++/var/nsd/etc/nsd.conf.*
+/var/nsd/zones/master/*.zone
++/var/pdns/*.backup
+/var/pdns/*.dump

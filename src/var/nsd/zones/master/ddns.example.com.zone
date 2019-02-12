@@ -1,0 +1,8 @@
+ddns.example.com.	3600	IN	SOA	dot.example.com. hostmaster.example.com.  ( 2000007637 10800 3600 604800 3600 )
+ddns.example.com.	3600	IN	A	203.0.113.200
+ddns.example.com.	3600	IN	AAAA	2001:0db8::200
+ddns.example.com.	3600	IN	NS	dig.example.com.
+ddns.example.com.	3600	IN	NS	dot.example.com.
+ddns.example.com.	3600	IN	TXT	"v=spf1 -all"
+ddns.example.com.	3600	IN	CAA	128 issue "letsencrypt.org"
+ddns.example.com.	3600	IN	CAA	128 issuewild ";"

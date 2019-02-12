@@ -1,0 +1,6 @@
+	# PowerDNS slave
+	provide-xfr: 127.0.0.1 tsig.dithematic.com.
+	provide-xfr: ::1 tsig.dithematic.com.
+	notify: 127.0.0.1@20053 tsig.dithematic.com.
+	notify: ::1@20053 tsig.dithematic.com.
+

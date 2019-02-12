@@ -1,0 +1,37 @@
+# (!) disable "log" with small /var/log
+logblock = "log" # "log" or ""
+
+anchor "all" {
+ block $logblock all
+}
+
+anchor "in-quick-scan" in proto tcp {
+ # Confound network scanners
+ block $logblock quick proto tcp all flags SF/SFRA
+ ##block quick proto tcp all flags SFUP/SFRAU
+ block $logblock quick proto tcp all flags FPU/SFRAUP
+ block $logblock quick proto tcp all flags /SFRA
+ block $logblock quick proto tcp all flags F/SFRA
+ block $logblock quick proto tcp all flags U/SFRAU
+ ##block quick proto tcp all flags P
+ block $logblock quick proto tcp all flags FUP/FUP
+}
+
+anchor "in-quick-bad" in on egress {
+ # Block incoming bad packets
+ block $logblock quick inet  proto icmp  all icmp-type  redir
+ block $logblock quick inet6 proto icmp6 all icmp6-type redir
+
+ # Block incoming traffic from the undesirable
+ block $logblock quick \
+  from { <martians> no-route urpf-failed <ban> }
+}
+
+anchor "out-quick-bad" out on egress {
+ # Block outgoing traffic to the undesirable, and tell us it's blocked
+ block return $logblock quick \
+  to { <martians> no-route }
+
+ # Block outgoing traffic that hasn't been translated
+ block $logblock quick inet from ! (egress:0)
+}

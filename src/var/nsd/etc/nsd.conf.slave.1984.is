@@ -1,0 +1,4 @@
+	# 1984.is slave (noDNSSEC)
+	provide-xfr: 93.95.224.6 NOKEY
+	notify: 93.95.224.6 NOKEY
+

@@ -1,0 +1,179 @@
+# special.local
+#
+#	   user: puffy
+#	machine: dot.example.com
+#	   tree: /
+#	   date: Tue Jul 24 15:36:42 2018
+
+# .
+/set type=file uname=root gname=wheel mode=0644
+.		type=dir mode=0755
+
+
+# ./etc
+etc		type=dir mode=0755
+    pf.conf.anchor.block \
+		mode=0600
+    pf.conf.anchor.icmp \
+		mode=0600
+    pf.conf.table.ban \
+		mode=0600
+    pf.conf.table.martians \
+		mode=0600
+    pf.conf.table.msa \
+		mode=0600
+    pf.conf.table.slavedns \
+		mode=0600
+    motd.authpf	optional
+
+
+# ./etc/authpf
+authpf		type=dir mode=0755
+    authpf.allow
+    authpf.conf
+    authpf.message
+    authpf.problem
+    authpf.rules
+# ./etc/authpf
+..
+
+
+# ./etc/pdns
+pdns		type=dir mode=0755
+    pdns.conf
+
+
+# ./etc/pdns/dnssec
+dnssec		type=dir mode=0700
+    *.*SK	mode=0600
+    *.DNSKEY	mode=0600
+# ./etc/pdns/dnssec
+..
+
+# ./etc/pdns
+..
+
+
+# ./etc/mtree
+/set type=file gname=wheel mode=0644
+mtree		type=dir mode=0755
+    special.local \
+		mode=0600 optional
+# ./etc/mtree
+..
+
+
+# ./etc/ssh
+ssh		type=dir mode=0755
+    sshd_banner	optional
+# ./etc/ssh
+..
+
+# ./etc
+..
+
+
+# ./usr
+usr		type=dir mode=0755
+
+
+# ./usr/local
+local		type=dir mode=0755
+
+
+# ./usr/local/bin
+bin		type=dir mode=0755
+    pdnsb.sh	gname=bin mode=0500
+    rmchangelist.sh \
+		gname=bin mode=0500
+# ./usr/local/bin
+..
+
+# ./usr/local
+..
+
+# ./usr
+..
+
+
+# ./var
+var		type=dir mode=0755
+
+
+# ./var/pdns
+pdns		type=dir uname=_powerdns mode=0750
+    *.sqlite	uname=_powerdns mode=0640
+    *.sqlite.backup \
+		uname=root mode=0600 optional
+    *.sqlite.dump \
+		uname=root mode=0600 optional
+# ./var/pdns
+..
+
+
+# ./var/nsd
+nsd		type=dir mode=0755
+
+
+# ./var/nsd/db
+db		type=dir gname=_nsd mode=0775
+# ./var/nsd/db
+..
+
+
+# ./var/nsd/etc
+etc		type=dir gname=_nsd mode=0750
+    nsd.conf.*	gname=_nsd mode=0640
+# ./var/nsd/etc
+..
+
+
+# ./var/nsd/zones
+zones		type=dir mode=0755
+
+
+# ./var/nsd/zones/master
+master		type=dir mode=0755
+    *.zone	mode=0600 optional
+# ./var/nsd/zones/master
+..
+
+
+# ./var/nsd/zones/slave
+slave		type=dir gname=_nsd mode=0775
+# ./var/nsd/zones/slave
+..
+
+# ./var/nsd/zones
+..
+
+# ./var/nsd
+..
+
+
+# ./var/unbound
+unbound		type=dir mode=0755
+
+
+# ./var/unbound/db
+/set type=file mode=0644
+db		type=dir uname=root gname=_unbound mode=0775
+    root.key	uname=_unbound gname=_unbound
+# ./var/unbound/db
+..
+
+
+# ./var/unbound/etc
+etc		type=dir mode=0755
+    root.hints
+# ./var/unbound/etc
+..
+
+# ./var/unbound
+..
+
+# ./var
+..
+
+..
+
