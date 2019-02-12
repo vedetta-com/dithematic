@@ -55,7 +55,7 @@ user add -L authpf -G ddns -c "DDNS user" -s /sbin/nologin -md /home/john john
 
 Enjoy:
 ```console
-rcctl enable nsd unbound powerdns
+rcctl enable nsd unbound pdns_server
 rcctl restart nsd unbound pdns_server
 ```
 
