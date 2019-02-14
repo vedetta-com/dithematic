@@ -7,7 +7,7 @@ GH_PROJECT ?=	dithematic
 #MAN =		man/${SCRIPT}.8
 MANDIR ?=	${PREFIX}/man/man
 BINDIR ?=	${PREFIX}/bin
-BASESYSCONFDIR ?= /etc
+BASESYSCONFDIR ?=	/etc
 VARBASE ?=	/var
 EXAMPLES_DIR ?=	${PREFIX}/share/examples/${GH_PROJECT}
 
@@ -28,7 +28,6 @@ SLAVE_IPv4 =	203.0.113.4
 SLAVE_IPv6 =	2001:0db8::4
 
 UPGRADE =	yes
-DOMAIN_INSTALL =        yes
 
 DITHEMATIC =	${SCRIPT} ${SYSCONF} ${PFCONF} ${AUTHPF} ${MAILCONF} \
 		${PDNSCONF} ${SSHCONF} ${MTREECONF} ${NSDCONF} ${UNBOUNDCONF} \
@@ -80,7 +79,6 @@ NSDCONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.HE.net \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.PowerDNS \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.Puck.nether.net \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.dithematic.com \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DDNS}.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DOMAIN_NAME} \
