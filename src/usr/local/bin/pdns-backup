@@ -1,23 +1,29 @@
 #!/bin/sh
-# Backup PowerDNS SQLite
+# PowerDNS SQLite Backup
 
-#set -eu
 set -o errexit
 set -o nounset
-
-umask 077
 
 # Bail out if non-privileged UID
 [ 0 = "$(id -u)" ] || exit 1
 
-KEY_DIR="${KEY_DIR:-/etc/pdns/dnssec}"
+KEY_DIR="${KEY_DIR:-/etc/ssl/dns}"
 ZONE_DIR="${ZONE_DIR:-/var/nsd/zones/master}"
 DB_DIR="${DB_DIR:-/var/pdns}"
 PDNS_DB="pdns.sqlite pdnssec.sqlite"
 
-[ -d ${KEY_DIR} ] || mkdir -p ${KEY_DIR}
-[ -d ${ZONE_DIR} ] || mkdir -p ${ZONE_DIR}
-[ -d ${DB_DIR} ] || mkdir -p ${DB_DIR}
+mkdir -p ${KEY_DIR}/private
+chmod 755 ${KEY_DIR}
+chmod 700 ${KEY_DIR}/private
+
+mkdir -p ${ZONE_DIR}
+chmod 755 ${ZONE_DIR}
+
+mkdir -p ${DB_DIR}
+chmod 750 ${DB_DIR}
+chown _powerdns:wheel ${DB_DIR}
+
+umask 077
 
 # SQL to File
 while read _zone
@@ -33,7 +39,7 @@ while read _zone
       then
         # Private key
         pdnsutil export-zone-key "${_zone}" "${_id}" \
-        > "${KEY_DIR}"/"${_zone}"."${_sk}"
+        > "${KEY_DIR}"/private/"${_zone}"."${_sk}"
         # DNSKEY RR
         pdnsutil export-zone-dnskey "${_zone}" "${_id}" \
         > "${KEY_DIR}"/"${_zone}".DNSKEY
