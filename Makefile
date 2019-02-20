@@ -63,7 +63,7 @@ AUTHPF =	${BASESYSCONFDIR:S|^/||}/authpf/authpf.allow \
 MAILCONF =	${BASESYSCONFDIR:S|^/||}/mail/smtpd.conf
 
 PDNSCONF =	${BASESYSCONFDIR:S|^/||}/pdns/pdns.conf
-DNSSECDIR =	${BASESYSCONFDIR:S|^/||}/pdns/dnssec
+KEYDIR =	${BASESYSCONFDIR:S|^/||}/ssl/dns
 
 SSHCONF =	${BASESYSCONFDIR:S|^/||}/ssh/sshd_banner \
 		${BASESYSCONFDIR:S|^/||}/ssh/sshd_config
@@ -175,7 +175,7 @@ realinstall:
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
 		${_DITHEMATIC:S|^|${DESTDIR}/|}
 .endfor
-	mkdir -pm700 ${DESTDIR}${DNSSECDIR}
+	mkdir -pm700 ${DESTDIR}${KEYDIR}
 
 afterinstall:
 	mtree -qef ${WRKSRC}${BASESYSCONFDIR}/mtree/special.local -p / -U
