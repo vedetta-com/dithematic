@@ -41,15 +41,6 @@ authpf		type=dir mode=0755
 # ./etc/pdns
 pdns		type=dir mode=0755
     pdns.conf
-
-
-# ./etc/pdns/dnssec
-dnssec		type=dir mode=0700
-    *.*SK	mode=0600
-    *.DNSKEY	mode=0600
-# ./etc/pdns/dnssec
-..
-
 # ./etc/pdns
 ..
 
@@ -67,6 +58,27 @@ mtree		type=dir mode=0755
 ssh		type=dir mode=0755
     sshd_banner	optional
 # ./etc/ssh
+..
+
+
+# ./etc/ssl
+ssl		type=dir mode=0755
+
+# ./etc/ssl/dns
+dns		type=dir mode=0755
+    *.DNSKEY	mode=0644
+
+# ./etc/ssl/dns/private
+private		type=dir mode=0700
+    *.*SK	mode=0600
+    *.TSIG	mode=0600
+# ./etc/ssl/dns/private
+..
+
+# ./etc/ssl/dns
+..
+
+# ./etc/ssl
 ..
 
 # ./etc
