@@ -16,8 +16,9 @@
 /etc/motd.authpf
 /etc/authpf/authpf.*
 /etc/pdns/pdns.conf
-/etc/pdns/dnssec/*.DNSKEY
-+/etc/pdns/dnssec/*.*SK
+/etc/ssl/dns/*.DNSKEY
++/etc/ssl/dns/private/*.*SK
++/etc/ssl/dns/private/*.TSIG
 /etc/ssh/sshd_banner
 +/var/unbound/db/root.key
 +/var/unbound/db/root.zone
