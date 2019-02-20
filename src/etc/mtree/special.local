@@ -95,8 +95,10 @@ local		type=dir mode=0755
 
 # ./usr/local/bin
 bin		type=dir mode=0755
-    pdnsb.sh	gname=bin mode=0500
-    rmchangelist.sh \
+    pdns-backup	gname=bin mode=0500
+    rmchangelist \
+		gname=bin mode=0500
+    tsig-secret \
 		gname=bin mode=0500
 # ./usr/local/bin
 ..
