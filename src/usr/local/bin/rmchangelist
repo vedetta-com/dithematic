@@ -4,7 +4,8 @@
 set -o errexit
 set -o nounset
 
-PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+# Bail out if non-privileged UID
+[ 0 = "$(id -u)" ] || exit 1
 
 changelist_local="/etc/changelist.local"
 changelist_tmp="$(mktemp)"
