@@ -22,7 +22,9 @@
 /etc/ssh/sshd_banner
 +/var/unbound/db/root.key
 +/var/unbound/db/root.zone
-/usr/local/bin/pdnsb.sh
+/usr/local/bin/pdns-backup
+/usr/local/bin/rmchangelist
+/usr/local/bin/tsig-secret
 +/var/nsd/etc/nsd.conf.*
 /var/nsd/zones/master/*.zone
 +/var/pdns/*.backup
