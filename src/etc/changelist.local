@@ -18,7 +18,7 @@
 /etc/pdns/pdns.conf
 /etc/ssl/dns/*.DNSKEY
 +/etc/ssl/dns/private/*.*SK
-+/etc/ssl/dns/private/*.TSIG
++/etc/ssl/dns/private/tsig.*
 /etc/ssh/sshd_banner
 +/var/unbound/db/root.key
 +/var/unbound/db/root.zone
