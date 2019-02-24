@@ -132,7 +132,7 @@ config:
 .if ${MASTER} == "no"
 	sed -i \
 		-e 's|^master=yes|#master=yes|' \
-		-e 's|^#slave=yes|slave=yes' \
+		-e 's|^#slave=yes|slave=yes|' \
 		${WRKSRC}/${PDNSCONF}
 	sed -i \
 		-e '/slave.PowerDNS/s|^#||' \
