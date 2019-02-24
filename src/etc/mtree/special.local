@@ -22,7 +22,7 @@ etc		type=dir mode=0755
 		mode=0600
     pf.conf.table.msa \
 		mode=0600
-    pf.conf.table.slavedns \
+    pf.conf.table.dns \
 		mode=0600
     motd.authpf	optional
 
@@ -71,7 +71,7 @@ dns		type=dir mode=0755
 # ./etc/ssl/dns/private
 private		type=dir mode=0700
     *.*SK	mode=0600
-    *.TSIG	mode=0600
+    tsig.*	mode=0600
 # ./etc/ssl/dns/private
 ..
 
@@ -98,8 +98,10 @@ bin		type=dir mode=0755
     pdns-backup	gname=bin mode=0500
     rmchangelist \
 		gname=bin mode=0500
-    tsig-secret \
-		gname=bin mode=0500
+    tsig-change	gname=bin mode=0500
+    tsig-fetch	gname=bin mode=0555
+    tsig-secret	gname=bin mode=0500
+    tsig-share	gname=bin mode=0500
 # ./usr/local/bin
 ..
 

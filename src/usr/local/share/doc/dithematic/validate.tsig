@@ -1,0 +1,5 @@
+key:
+	name: "tsig.example.com."
+	algorithm: hmac-sha512
+	secret: include: ~/.key/tsig.*
+

@@ -9,6 +9,7 @@ MANDIR ?=	${PREFIX}/man/man
 BINDIR ?=	${PREFIX}/bin
 BASESYSCONFDIR ?=	/etc
 VARBASE ?=	/var
+DOCDIR ?=	${PREFIX}/share/doc/${GH_PROJECT}
 EXAMPLES_DIR ?=	${PREFIX}/share/examples/${GH_PROJECT}
 
 # Server
@@ -35,16 +36,21 @@ DITHEMATIC =	${SCRIPT} ${SYSCONF} ${PFCONF} ${AUTHPF} ${MAILCONF} \
 
 # Dithematic
 
-SCRIPT =	${BINDIR:S|^/||}/pdnsb.sh \
-		${BINDIR:S|^/||}/rmchangelist.sh
+SCRIPT =	${BINDIR:S|^/||}/pdns-backup \
+		${BINDIR:S|^/||}/rmchangelist \
+		${BINDIR:S|^/||}/tsig-change \
+		${BINDIR:S|^/||}/tsig-fetch \
+		${BINDIR:S|^/||}/tsig-secret \
+		${BINDIR:S|^/||}/tsig-share
 
 SYSCONF =	${BASESYSCONFDIR:S|^/||}/changelist.local \
 		${BASESYSCONFDIR:S|^/||}/daily.local \
-		${BASESYSCONFDIR:S|^/||}/sysctl.conf \
-		${BASESYSCONFDIR:S|^/||}/resolv.conf \
 		${BASESYSCONFDIR:S|^/||}/dhclient.conf \
 		${BASESYSCONFDIR:S|^/||}/doas.conf \
-		${BASESYSCONFDIR:S|^/||}/motd.authpf
+		${BASESYSCONFDIR:S|^/||}/motd.authpf \
+		${BASESYSCONFDIR:S|^/||}/resolv.conf \
+		${BASESYSCONFDIR:S|^/||}/sysctl.conf \
+		${BASESYSCONFDIR:S|^/||}/weekly.local
 
 PFCONF =	${BASESYSCONFDIR:S|^/||}/pf.conf \
 		${BASESYSCONFDIR:S|^/||}/pf.conf.anchor.block \
@@ -164,8 +170,8 @@ beforeinstall: upgrade
 .if ${UPGRADE} == "yes"
 . for _DITHEMATIC in ${DITHEMATIC}
 	(umask 077; [[ -r ${_DITHEMATIC:S|^|${WRKSRC}/|:S|$|.merged|} ]] \
-	&& cp -p ${WRKSRC}/${_DITHEMATIC}.merged ${WRKSRC}/${_DITHEMATIC} \
-	|| [[ "$$?" -eq 1 ]])
+		&& cp -p ${WRKSRC}/${_DITHEMATIC}.merged ${WRKSRC}/${_DITHEMATIC} \
+		|| [[ "$$?" -eq 1 ]])
 . endfor
 .endif
 
@@ -185,6 +191,12 @@ afterinstall:
 .if !empty(AUTHPF)
 	group info -e ddns || group add -g 20053 ddns
 .endif
+	user info -e tsig \
+	|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -md /home/tsig tsig; \
+		mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }
+	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
+	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
+		${WRKSRC}${DOCDIR}/validate.tsig ${DOCDIR}
 
 .PHONY: upgrade
 .USE: upgrade

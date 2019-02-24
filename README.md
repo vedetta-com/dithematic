@@ -53,6 +53,25 @@ Add a [DDNS](https://tools.ietf.org/html/rfc2136) user:
 user add -L authpf -G ddns -c "DDNS user" -s /sbin/nologin -md /home/john john
 ```
 
+Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers:
+```console
+su - tsig
+ssh-keygen -t ed25519 -C tsig@example.com
+exit
+cat /home/tsig/.ssh/id_ed25519.pub \
+| ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP "cat >> /home/tsig/.ssh/authorized_keys"
+```
+
+Install TSIG
+```console
+tsig-secret && tsig-change && tsig-share
+```
+
+Install DNS zone(s):
+```console
+# WiP
+```
+
 Enjoy:
 ```console
 rcctl enable nsd unbound pdns_server

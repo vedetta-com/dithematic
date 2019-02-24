@@ -24,7 +24,10 @@
 +/var/unbound/db/root.zone
 /usr/local/bin/pdns-backup
 /usr/local/bin/rmchangelist
+/usr/local/bin/tsig-change
+/usr/local/bin/tsig-fetch
 /usr/local/bin/tsig-secret
+/usr/local/bin/tsig-share
 +/var/nsd/etc/nsd.conf.*
 /var/nsd/zones/master/*.zone
 +/var/pdns/*.backup

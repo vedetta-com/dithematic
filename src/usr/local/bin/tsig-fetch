@@ -1,0 +1,30 @@
+#!/bin/sh
+# TSIG fetch: tsig-fetch name
+# e.g. tsig-fetch tsig.example.com
+
+set -o errexit
+set -o nounset
+
+# Bail out if non-privileged UID
+[ 25353 = "$(id -u)" ] || exit 1
+
+KEY_NAME="$1"
+VALIDATE="/usr/local/share/doc/dithematic/validate.tsig"
+
+umask 077
+
+# Download
+cat > /home/tsig/.key/${KEY_NAME}
+
+# Validate
+nsd-checkconf "${VALIDATE}"
+
+# Install
+doas cp /home/tsig/.key/${KEY_NAME} /etc/ssl/dns/private/
+
+# Change
+doas tsig-change ${KEY_NAME}
+
+# Clean
+rm /home/tsig/.key/${KEY_NAME}
+

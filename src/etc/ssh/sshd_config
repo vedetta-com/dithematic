@@ -38,7 +38,7 @@
 
 # Authentication:
 
-AllowGroups wheel
+AllowGroups wheel ddns tsig
 
 LoginGraceTime 1m # default: 2m
 PermitRootLogin no
@@ -119,4 +119,11 @@ Match Group ddns
 	ClientAliveInterval 15 # default 0
 	ClientAliveCountMax 3 # default 3
 	ForceCommand /sbin/nologin # disable sftp
+
+Match Group tsig
+	AllowTcpForwarding no
+	AuthorizedKeysFile .ssh/authorized_keys
+	PasswordAuthentication no
+	Banner none
+	ForceCommand tsig-fetch tsig.example.com
 
