@@ -1,10 +1,12 @@
 # pfctl -t dns -T replace -f /etc/pf.conf.table.dns
 
-# dot.example.com
+# *.example.com
 #
 # notify and axfr
 203.0.113.3
 2001:0db8::3
+203.0.113.4
+2001:0db8::4
 
 # HE.net
 #
