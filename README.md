@@ -51,6 +51,7 @@ nsd-control-setup
 Add a [DDNS](https://tools.ietf.org/html/rfc2136) user:
 ```console
 user add -L authpf -G ddns -c "DDNS user" -s /sbin/nologin -md /home/john john
+echo john >> /etc/authpf/authpf.allow
 ```
 
 Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers:
