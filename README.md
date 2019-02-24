@@ -63,7 +63,7 @@ cat /home/tsig/.ssh/id_ed25519.pub \
 | ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP "cat >> /home/tsig/.ssh/authorized_keys"
 ```
 
-Run the TSIG Wizard
+Run the TSIG Wizard:
 ```console
 tsig-secret tsig.example.com && tsig-change tsig.example.com && tsig-share tsig.example.com
 ```
