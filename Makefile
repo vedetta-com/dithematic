@@ -131,8 +131,8 @@ config:
 		{} +
 .if ${MASTER} == "no"
 	sed -i \
-		-e 's|^master=yes|#master=yes|' \
-		-e 's|^#slave=yes|slave=yes|' \
+		-e 's|^master=yes|\#master=yes|' \
+		-e 's|^\#slave=yes|slave=yes|' \
 		${WRKSRC}/${PDNSCONF}
 	sed -i \
 		-e 's|${SLAVE_HOST}|${MASTER_HOST}|g' \
@@ -142,10 +142,10 @@ config:
 		-e 's|${MASTER_IPv6}|${SLAVE_IPv6}|g' \
 		${WRKSRC}/${NSDCONF:M*nsd.conf}
 	sed -i \
-		-e '/slave\.PowerDNS/s|^#||' \
-		-e '/master\.${DOMAIN_NAME}/s|^#||' \
-		-e '/master\.PowerDNS/s|^|#|' \
-		-e '/slave\.${DOMAIN_NAME}/s|^|#|' \
+		-e '/slave\.PowerDNS/s|^\#||' \
+		-e '/master\.${DOMAIN_NAME}/s|^\#||' \
+		-e '/master\.PowerDNS/s|^|\#|' \
+		-e '/slave\.${DOMAIN_NAME}/s|^|\#|' \
 		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.example.com \
 		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.ddns.example.com
 	@echo Super-Slave
