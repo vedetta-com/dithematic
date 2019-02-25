@@ -11,7 +11,7 @@ Dithematic configuration and guide for self-hosting DNS
 
 ## Features
 
-[PowerDNS](https://www.powerdns.com/) features on [OpenBSD](https://github.com/openbsd/src/tree/master/usr.sbin/nsd)'s [NSD](https://man.openbsd.org/nsd.conf) shoulders
+[PowerDNS](https://doc.powerdns.com/authoritative/) features on [OpenBSD](https://github.com/openbsd/src/tree/master/usr.sbin/nsd)'s [NSD](https://man.openbsd.org/nsd.conf) shoulders
 
 ## Getting started
 
@@ -25,27 +25,6 @@ pkg_add powerdns ldns-utils drill
 Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local":
 ```console
 make install
-```
-
-Install DNS SQL:
-```console
-sqlite3
-.read /usr/local/share/doc/pdns/schema.sqlite3.sql
-.save /var/pdns/pdns.sqlite
-.exit
-```
-
-Install DNSSEC SQL:
-```console
-sqlite3
-.read /usr/local/share/doc/pdns/dnssec-3.x_to_3.4.0_schema.sqlite3.sql
-.save /var/pdns/pdnssec.sqlite
-.exit
-```
-
-Setup NSD:
-```console
-nsd-control-setup
 ```
 
 Add a [DDNS](https://tools.ietf.org/html/rfc2136) user:
