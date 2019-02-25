@@ -1,5 +1,6 @@
-# Caesonia
+# /sbin/pfctl -t msa -T replace -f /etc/pf.conf.table.msa
 #
+# Caesonia
 203.0.113.1
 2001:0db8::1
 203.0.113.2
