@@ -98,6 +98,7 @@ CRONTAB =	${VARBASE:S|^/||}/cron/tabs/root
 
 HOSTNAME !!=	hostname
 WRKSRC ?=	${HOSTNAME:S|^|${.CURDIR}/|}
+RELEASE !!=	uname -r
 
 #-8<-----------	[ cut here ] --------------------------------------------------^
 
@@ -198,9 +199,22 @@ afterinstall:
 .if !empty(AUTHPF)
 	group info -e ddns || group add -g 20053 ddns
 .endif
+	[[ -r ${VARBASE}/nsd/etc/nsd_control.pem ]] || nsd-control-setup
+	[[ -r ${VARBASE}/pdns/pdns.sqlite ]] \
+	|| sqlite3 ${VARBASE}/pdns/pdns.sqlite \
+		-init ${PREFIX}/share/doc/pdns/schema.sqlite3.sql ".exit"
+	[[ -r ${VARBASE}/pdns/pdnssec.sqlite ]] \
+	|| sqlite3 ${VARBASE}/pdns/pdnssec.sqlite \
+		-init ${PREFIX}/share/doc/pdns/dnssec-3.x_to_3.4.0_schema.sqlite3.sql ".exit"
+	chmod 640 ${VARBASE}/pdns/pdns*.sqlite
+	chown _powerdns ${VARBASE}/pdns/pdns*.sqlite
 	user info -e tsig \
 	|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -md /home/tsig tsig; \
 		mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }
+	[[ -r ${BASESYSCONFDIR}/changelist-${RELEASE} ]] \
+	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
+	sed -i '/changelist.local/,$$d' ${BASESYSCONFDIR}/changelist
+	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
 	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${WRKSRC}${DOCDIR}/validate.tsig ${DOCDIR}
