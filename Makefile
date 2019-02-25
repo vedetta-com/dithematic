@@ -135,10 +135,17 @@ config:
 		-e 's|^#slave=yes|slave=yes|' \
 		${WRKSRC}/${PDNSCONF}
 	sed -i \
-		-e '/slave.PowerDNS/s|^#||' \
-		-e '/master.${DOMAIN_NAME}/s|^#||' \
-		-e '/master.PowerDNS/s|^|#|' \
-		-e '/slave.${DOMAIN_NAME}/s|^|#|' \
+		-e 's|${SLAVE_HOST}|${MASTER_HOST}|g' \
+		${WRKSRC}/${SCRIPT:M*tsig-share}
+	sed -i \
+		-e 's|${MASTER_IPv4}|${SLAVE_IPv4}|g' \
+		-e 's|${MASTER_IPv6}|${SLAVE_IPv6}|g' \
+		${WRKSRC}/${NSDCONF:M*nsd.conf}
+	sed -i \
+		-e '/slave\.PowerDNS/s|^#||' \
+		-e '/master\.${DOMAIN_NAME}/s|^#||' \
+		-e '/master\.PowerDNS/s|^|#|' \
+		-e '/slave\.${DOMAIN_NAME}/s|^|#|' \
 		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.example.com \
 		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.ddns.example.com
 	@echo Super-Slave
