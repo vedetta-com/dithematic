@@ -157,7 +157,7 @@ config:
 . if "${_NSDCONF:S|${DDNS}|ddns|:S|${DOMAIN_NAME}|example.com|}" \
   != "${_NSDCONF}"
 	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|${DDNS}|ddns|:S|^|${WRKSRC}/|} \
-	      ${_NSDCONF:S|^|${WRKSRC}/|}
+		${_NSDCONF:S|^|${WRKSRC}/|}
 . endif
 .endfor
 	@echo Configured
@@ -165,10 +165,10 @@ config:
 ${DITHEMATIC}:
 	(umask 077; [[ -r ${DESTDIR}/$@ ]] \
 	&& (diff -u ${DESTDIR}/$@ ${WRKSRC}/$@ >/dev/null \
-	   || sdiff -as -w $$(tput -T $${TERM:-vt100} cols) \
-		-o ${WRKSRC}/$@.merged \
-		${DESTDIR}/$@ \
-		${WRKSRC}/$@) \
+		|| sdiff -as -w $$(tput -T $${TERM:-vt100} cols) \
+			-o ${WRKSRC}/$@.merged \
+			${DESTDIR}/$@ \
+			${WRKSRC}/$@) \
 	|| [[ "$$?" -eq 1 ]])
 
 clean:
@@ -208,7 +208,7 @@ afterinstall:
 		-init ${PREFIX}/share/doc/pdns/dnssec-3.x_to_3.4.0_schema.sqlite3.sql ".exit"
 	chmod 640 ${VARBASE}/pdns/pdns*.sqlite
 	chown _powerdns ${VARBASE}/pdns/pdns*.sqlite
-	user info -e tsig \
+	group info -e tsig || user info -e tsig \
 	|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -md /home/tsig tsig; \
 		mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }
 	[[ -r ${BASESYSCONFDIR}/changelist-${RELEASE} ]] \
