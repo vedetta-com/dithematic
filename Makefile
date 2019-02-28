@@ -30,9 +30,9 @@ SLAVE_IPv6 =	2001:0db8::4
 
 UPGRADE =	yes
 
-DITHEMATIC =	${SCRIPT} ${SYSCONF} ${PFCONF} ${AUTHPF} ${MAILCONF} \
-		${PDNSCONF} ${SSHCONF} ${MTREECONF} ${NSDCONF} ${UNBOUNDCONF} \
-		${CRONALLOW} ${CRONTAB}
+DITHEMATIC =	${SCRIPT} ${SYSCONF} ${PFCONF} ${AUTHPFCONF} ${MAILCONF} \
+		${PDNSCONF} ${SSHCONF} ${MTREECONF} ${NSDCONF} ${FREECONF} \
+		${UNBOUNDCONF} ${CRONALLOW} ${CRONTAB}
 
 # Dithematic
 
@@ -60,7 +60,7 @@ PFCONF =	${BASESYSCONFDIR:S|^/||}/pf.conf \
 		${BASESYSCONFDIR:S|^/||}/pf.conf.table.martians \
 		${BASESYSCONFDIR:S|^/||}/pf.conf.table.msa
 
-AUTHPF =	${BASESYSCONFDIR:S|^/||}/authpf/authpf.allow \
+AUTHPFCONF =	${BASESYSCONFDIR:S|^/||}/authpf/authpf.allow \
 		${BASESYSCONFDIR:S|^/||}/authpf/authpf.conf \
 		${BASESYSCONFDIR:S|^/||}/authpf/authpf.message \
 		${BASESYSCONFDIR:S|^/||}/authpf/authpf.problem \
@@ -79,17 +79,19 @@ MTREECONF =	${BASESYSCONFDIR:S|^/||}/mtree/special.local
 NSDCONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.master.PowerDNS \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.master.${DOMAIN_NAME} \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.1984.is \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.FreeDNS.afraid.org \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.GratisDNS.com \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.HE.net \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.PowerDNS \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.Puck.nether.net \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DDNS}.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/zones/master/${DDNS}.${DOMAIN_NAME}.zone \
 		${VARBASE:S|^/||}/nsd/zones/master/${DOMAIN_NAME}.zone
+
+FREECONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.1984.is \
+		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.FreeDNS.afraid.org \
+		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.GratisDNS.com \
+		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.HE.net \
+		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.PowerDNS \
+		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.Puck.nether.net
 
 UNBOUNDCONF =	${VARBASE:S|^/||}/unbound/etc/unbound.conf
 
@@ -130,10 +132,10 @@ config:
 		-e 's|203.0.113.4|${SLAVE_IPv4}|g' \
 		-e 's|2001:0db8::4|${SLAVE_IPv6}|g' \
 		{} +
-.if ${MASTER} == "no"
+.if ${MASTER} != "yes"
 	sed -i \
-		-e 's|^master=yes|\#master=yes|' \
-		-e 's|^\#slave=yes|slave=yes|' \
+		-e 's|^master=yes|#master=yes|' \
+		-e 's|^#slave=yes|slave=yes|' \
 		${WRKSRC}/${PDNSCONF}
 	sed -i \
 		-e 's|${SLAVE_HOST}|${MASTER_HOST}|g' \
@@ -143,22 +145,19 @@ config:
 		-e 's|${MASTER_IPv6}|${SLAVE_IPv6}|g' \
 		${WRKSRC}/${NSDCONF:M*nsd.conf}
 	sed -i \
-		-e '/slave\.PowerDNS/s|^\#||' \
-		-e '/master\.${DOMAIN_NAME}/s|^\#||' \
-		-e '/master\.PowerDNS/s|^|\#|' \
-		-e '/slave\.${DOMAIN_NAME}/s|^|\#|' \
+		-e '/slave\.PowerDNS/s|^#||' \
+		-e '/master\.${DOMAIN_NAME}/s|^#||' \
+		-e '/master\.PowerDNS/s|^|#|' \
+		-e '/slave\.${DOMAIN_NAME}/s|^|#|' \
 		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.example.com \
 		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.ddns.example.com
 	@echo Super-Slave
 .else
 	@echo Super-Master
 .endif
-.for _NSDCONF in ${NSDCONF}
-. if "${_NSDCONF:S|${DDNS}|ddns|:S|${DOMAIN_NAME}|example.com|}" \
-  != "${_NSDCONF}"
+.for _NSDCONF in ${NSDCONF:N*nsd.conf:N*.PowerDNS}
 	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|${DDNS}|ddns|:S|^|${WRKSRC}/|} \
 		${_NSDCONF:S|^|${WRKSRC}/|}
-. endif
 .endfor
 	@echo Configured
 
@@ -192,12 +191,11 @@ realinstall:
 	mkdir -pm700 ${DESTDIR}${KEYDIR}
 
 afterinstall:
-	mtree -qef ${WRKSRC}${BASESYSCONFDIR}/mtree/special.local -p / -U
 .if !empty(CRONTAB)
 	crontab -u root ${WRKSRC}/${CRONTAB}
 .endif
-.if !empty(AUTHPF)
-	group info -e ddns || group add -g 20053 ddns
+.if !empty(AUTHPFCONF)
+	group info -e authdns || group add -g 20053 authdns
 .endif
 	[[ -r ${VARBASE}/nsd/etc/nsd_control.pem ]] || nsd-control-setup
 	[[ -r ${VARBASE}/pdns/pdns.sqlite ]] \
@@ -206,8 +204,6 @@ afterinstall:
 	[[ -r ${VARBASE}/pdns/pdnssec.sqlite ]] \
 	|| sqlite3 ${VARBASE}/pdns/pdnssec.sqlite \
 		-init ${PREFIX}/share/doc/pdns/dnssec-3.x_to_3.4.0_schema.sqlite3.sql ".exit"
-	chmod 640 ${VARBASE}/pdns/pdns*.sqlite
-	chown _powerdns ${VARBASE}/pdns/pdns*.sqlite
 	group info -e tsig || user info -e tsig \
 	|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -md /home/tsig tsig; \
 		mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }
@@ -215,6 +211,8 @@ afterinstall:
 	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
 	sed -i '/changelist.local/,$$d' ${BASESYSCONFDIR}/changelist
 	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
+	mtree -qef ${WRKSRC}${BASESYSCONFDIR}/mtree/special -p / -U
+	mtree -qef ${WRKSRC}${BASESYSCONFDIR}/mtree/special.local -p / -U
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
 	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${WRKSRC}${DOCDIR}/validate.tsig ${DOCDIR}
