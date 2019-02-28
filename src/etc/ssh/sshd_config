@@ -38,7 +38,7 @@
 
 # Authentication:
 
-AllowGroups wheel ddns tsig
+AllowGroups wheel tsig authdns
 
 LoginGraceTime 1m # default: 2m
 PermitRootLogin no
@@ -114,7 +114,7 @@ Match Group wheel
 	AllowTcpForwarding yes
 #	PermitOpen host:port
 
-Match Group ddns
+Match Group authdns
 	AllowTcpForwarding no
 	ClientAliveInterval 15 # default 0
 	ClientAliveCountMax 3 # default 3
