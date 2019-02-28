@@ -205,7 +205,7 @@ afterinstall:
 	|| sqlite3 ${VARBASE}/pdns/pdnssec.sqlite \
 		-init ${PREFIX}/share/doc/pdns/dnssec-3.x_to_3.4.0_schema.sqlite3.sql ".exit"
 	group info -e tsig || user info -e tsig \
-	|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -md /home/tsig tsig; \
+	|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -m tsig; \
 		mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }
 	[[ -r ${BASESYSCONFDIR}/changelist-${RELEASE} ]] \
 	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
