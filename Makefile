@@ -211,8 +211,8 @@ afterinstall:
 	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
 	sed -i '/changelist.local/,$$d' ${BASESYSCONFDIR}/changelist
 	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
-	mtree -qef ${WRKSRC}${BASESYSCONFDIR}/mtree/special -p / -U
-	mtree -qef ${WRKSRC}${BASESYSCONFDIR}/mtree/special.local -p / -U
+	mtree -qef ${BASESYSCONFDIR}/mtree/special -p / -U
+	mtree -qef ${BASESYSCONFDIR}/mtree/special.local -p / -U
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
 	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${WRKSRC}${DOCDIR}/validate.tsig ${DOCDIR}
