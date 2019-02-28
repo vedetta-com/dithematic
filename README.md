@@ -27,10 +27,9 @@ Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local
 make install
 ```
 
-Add a [DDNS](https://tools.ietf.org/html/rfc2136) user:
+Add a [DDNS](https://tools.ietf.org/html/rfc2136) user, e.g.:
 ```console
-user add -L authpf -G ddns -c "DDNS user" -s /sbin/nologin -md /home/john john
-echo john >> /etc/authpf/authpf.allow
+user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
 ```
 
 Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers:
@@ -42,9 +41,10 @@ cat /home/tsig/.ssh/id_ed25519.pub \
 | ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP "cat >> /home/tsig/.ssh/authorized_keys"
 ```
 
-Run the TSIG Wizard:
+Run the TSIG Wizard, e.g.:
 ```console
 tsig-secret tsig.example.com && tsig-change tsig.example.com && tsig-share tsig.example.com
+tsig-secret tsig.ddns.example.com && tsig-change tsig.ddns.example.com
 ```
 
 Install DNS zone(s):
