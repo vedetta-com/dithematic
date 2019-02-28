@@ -15,7 +15,7 @@ Dithematic configuration and guide for self-hosting DNS
 
 ## Getting started
 
-Minimum requirements: 512MB RAM, [10GB SSD](src/usr/local/share/doc/dithematic/disklabel)
+*Minimum requirements*: 512MB RAM, [10GB SSD](src/usr/local/share/doc/dithematic/disklabel)
 
 Install packages:
 ```console
