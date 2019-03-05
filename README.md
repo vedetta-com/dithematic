@@ -37,8 +37,9 @@ Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers:
 su - tsig
 ssh-keygen -t ed25519 -C tsig@example.com
 exit
-cat /home/tsig/.ssh/id_ed25519.pub \
-| ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP "cat >> /home/tsig/.ssh/authorized_keys"
+ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP \
+	"umask 077; cat - >> /home/tsig/.ssh/authorized_keys" \
+	< /home/tsig/.ssh/id_ed25519.pub
 ```
 
 Run the TSIG Wizard, e.g.:
