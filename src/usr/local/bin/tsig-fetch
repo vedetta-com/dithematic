@@ -9,22 +9,23 @@ set -o nounset
 [ 25353 = "$(id -u)" ] || exit 1
 
 KEY_NAME="$1"
+KEY_DIR="${KEY_DIR:-/etc/ssl/dns}"
 VALIDATE="/usr/local/share/doc/dithematic/validate.tsig"
 
 umask 077
 
 # Download
-cat > /home/tsig/.key/${KEY_NAME}
+cat - > ${HOME}/.key/${KEY_NAME}
 
 # Validate
 nsd-checkconf "${VALIDATE}"
 
 # Install
-doas cp /home/tsig/.key/${KEY_NAME} /etc/ssl/dns/private/
+doas cp ${HOME}/.key/${KEY_NAME} ${KEY_DIR}/private/
 
 # Change
 doas tsig-change ${KEY_NAME}
 
 # Clean
-rm /home/tsig/.key/${KEY_NAME}
+rm ${HOME}/.key/${KEY_NAME}
 
