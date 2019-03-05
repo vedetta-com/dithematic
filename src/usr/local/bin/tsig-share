@@ -14,13 +14,13 @@ KEY_DIR="${KEY_DIR:-/etc/ssl/dns}"
 KEY_USER="${KEY_USER:-tsig}"
 SSH_ID="/home/${KEY_USER}/.ssh/id_ed25519"
 SSH_LOGIN="${KEY_USER}"
-NS="dig.example.com" # domain name(s) or IP(s)
+NS="${NS:-dig.example.com}" # (space-separated) domain name(s), or IP(s)
 
 [ -r ${KEY_DIR}/private/${KEY_NAME} ]
 
-for _ns in ${NS}
+for _NS in ${NS}
   do
-    cat ${KEY_DIR}/private/${KEY_NAME} \
-    | ssh -i ${SSH_ID} -l ${SSH_LOGIN} -o VerifyHostKeyDNS=yes ${_ns} exit
+    ssh -i ${SSH_ID} -l ${SSH_LOGIN} -o VerifyHostKeyDNS=yes ${_NS} exit \
+    < ${KEY_DIR}/private/${KEY_NAME}
   done
 
