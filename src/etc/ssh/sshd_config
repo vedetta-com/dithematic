@@ -126,4 +126,6 @@ Match Group tsig
 	PasswordAuthentication no
 	Banner none
 	ForceCommand tsig-fetch tsig.example.com
+	PermitTTY no
+	PermitUserRC no
 
