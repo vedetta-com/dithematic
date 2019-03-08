@@ -7,7 +7,7 @@ OpenBSD DNS name server
 ## About
 > autoritative nameserver for domain names
 
-Dithematic configuration and guide for self-hosting DNS
+Dithematic configuration and guide for self-hosting [DNS](https://powerdns.org/dns-camel/)
 
 ## Features
 
