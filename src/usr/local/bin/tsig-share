@@ -18,9 +18,9 @@ NS="${NS:-dig.example.com}" # (space-separated) domain name(s), or IP(s)
 
 [ -r ${KEY_DIR}/private/${KEY_NAME} ]
 
-for _NS in ${NS}
+for _ns in ${NS}
   do
-    ssh -i ${SSH_ID} -l ${SSH_LOGIN} -o VerifyHostKeyDNS=yes ${_NS} exit \
+    ssh -i ${SSH_ID} -l ${SSH_LOGIN} -o VerifyHostKeyDNS=yes ${_ns} exit \
     < ${KEY_DIR}/private/${KEY_NAME}
   done
 
