@@ -49,7 +49,12 @@ while read _zone
     # - add parenthesis to SOA RR
     # - remove DNSSEC RRSet
     drill -p 20053 AXFR "${_zone}" @localhost \
-    | sed -e '$ d' -e '/SOA/ s/.*\. /& ( /' -e '/SOA/ s/$/ )/' -e '/NSEC3/d' -e '/RRSIG/d' -e '/DNSKEY/d' \
+    | sed -e '$ d' \
+          -e '/SOA/ s/.*\. /& ( /' \
+          -e '/SOA/ s/$/ )/' \
+          -e '/NSEC3/d' \
+          -e '/RRSIG/d' \
+          -e '/DNSKEY/d' \
     > "${ZONE_DIR}"/"${_zone}".zone
   done << EOF
 $(pdnsutil list-all-zones)
