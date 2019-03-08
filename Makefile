@@ -10,7 +10,7 @@ BINDIR ?=	${PREFIX}/bin
 BASESYSCONFDIR ?=	/etc
 VARBASE ?=	/var
 DOCDIR ?=	${PREFIX}/share/doc/${GH_PROJECT}
-EXAMPLES_DIR ?=	${PREFIX}/share/examples/${GH_PROJECT}
+EXAMPLESDIR ?=	${PREFIX}/share/examples/${GH_PROJECT}
 
 # Server
 
@@ -32,7 +32,7 @@ UPGRADE =	yes
 
 DITHEMATIC =	${SCRIPT} ${SYSCONF} ${PFCONF} ${AUTHPFCONF} ${MAILCONF} \
 		${PDNSCONF} ${SSHCONF} ${MTREECONF} ${NSDCONF} ${FREECONF} \
-		${UNBOUNDCONF} ${CRONALLOW} ${CRONTAB}
+		${UNBOUNDCONF} ${CRONALLOW} ${CRONTAB} ${DOC}
 
 # Dithematic
 
@@ -98,6 +98,8 @@ UNBOUNDCONF =	${VARBASE:S|^/||}/unbound/etc/unbound.conf
 CRONALLOW =	${VARBASE:S|^/||}/cron/cron.allow
 CRONTAB =	${VARBASE:S|^/||}/cron/tabs/root
 
+DOC =		${DOCDIR:S|^/||}/validate.tsig
+
 HOSTNAME !!=	hostname
 WRKSRC ?=	${HOSTNAME:S|^|${.CURDIR}/|}
 RELEASE !!=	uname -r
@@ -136,7 +138,7 @@ config:
 	sed -i \
 		-e 's|^master=yes|#master=yes|' \
 		-e 's|^#slave=yes|slave=yes|' \
-		${WRKSRC}/${PDNSCONF}
+		${WRKSRC}/${PDNSCONF:M*pdns.conf}
 	sed -i \
 		-e 's|${SLAVE_HOST}|${MASTER_HOST}|g' \
 		${WRKSRC}/${SCRIPT:M*tsig-share}
@@ -183,6 +185,7 @@ beforeinstall: upgrade
 .endif
 
 realinstall:
+	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
 .for _DITHEMATIC in ${DITHEMATIC:N*cron/tabs*}
 	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
@@ -213,9 +216,6 @@ afterinstall:
 	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
 	mtree -qef ${BASESYSCONFDIR}/mtree/special -p / -U
 	mtree -qef ${BASESYSCONFDIR}/mtree/special.local -p / -U
-	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
-	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
-		${WRKSRC}${DOCDIR}/validate.tsig ${DOCDIR}
 
 .PHONY: upgrade
 .USE: upgrade
