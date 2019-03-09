@@ -99,6 +99,8 @@ CRONALLOW =	${VARBASE:S|^/||}/cron/cron.allow
 CRONTAB =	${VARBASE:S|^/||}/cron/tabs/root
 
 DOC =		${DOCDIR:S|^/||}/validate.tsig
+EXAMPLES =	${VARBASE:S|^/||}/nsd/etc/*.example.com \
+		${VARBASE:S|^/||}/nsd/zones/master/*example.com.zone
 
 HOSTNAME !!=	hostname
 WRKSRC ?=	${HOSTNAME:S|^|${.CURDIR}/|}
@@ -186,6 +188,9 @@ beforeinstall: upgrade
 
 realinstall:
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
+	${INSTALL} -d -m ${DIRMODE} ${EXAMPLESDIR}
+	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
+		${EXAMPLES:S|^|${.CURDIR}/src/|} ${EXAMPLESDIR}
 .for _DITHEMATIC in ${DITHEMATIC:N*cron/tabs*}
 	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
@@ -221,4 +226,3 @@ afterinstall:
 .USE: upgrade
 
 .include <bsd.prog.mk>
-
