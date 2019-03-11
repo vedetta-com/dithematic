@@ -81,9 +81,7 @@ NSDCONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.PowerDNS \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DDNS}.${DOMAIN_NAME} \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DOMAIN_NAME} \
-		${VARBASE:S|^/||}/nsd/zones/master/${DDNS}.${DOMAIN_NAME}.zone \
-		${VARBASE:S|^/||}/nsd/zones/master/${DOMAIN_NAME}.zone
+		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DOMAIN_NAME}
 
 FREECONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.1984.is \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.FreeDNS.afraid.org \
@@ -99,7 +97,7 @@ CRONTAB =	${VARBASE:S|^/||}/cron/tabs/root
 
 DOC =		${DOCDIR:S|^/||}/validate.tsig
 EXAMPLES =	${VARBASE:S|^/||}/nsd/etc/*.example.com \
-		${VARBASE:S|^/||}/nsd/zones/master/*example.com.zone
+		${EXAMPLESDIR:S|^/||}/*example.com.zone
 
 HOSTNAME !!=	hostname
 WRKSRC ?=	${HOSTNAME:S|^|${.CURDIR}/|}
@@ -188,10 +186,10 @@ beforeinstall: upgrade
 realinstall:
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
 	${INSTALL} -d -m ${DIRMODE} ${EXAMPLESDIR}
-	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
+	${INSTALL} -S -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${EXAMPLES:S|^|${.CURDIR}/src/|} ${EXAMPLESDIR}
 .for _DITHEMATIC in ${DITHEMATIC:N*cron/tabs*}
-	${INSTALL} -S -b -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
+	${INSTALL} -S -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
 		${_DITHEMATIC:S|^|${DESTDIR}/|}
 .endfor
