@@ -163,13 +163,13 @@ config:
 	@echo Configured
 
 ${DITHEMATIC}:
-	(umask 077; [[ -r ${DESTDIR}/$@ ]] \
-	&& (diff -u ${DESTDIR}/$@ ${WRKSRC}/$@ >/dev/null \
+	[[ -r ${DESTDIR}/$@ ]] \
+	&& (umask 077; diff -u ${DESTDIR}/$@ ${WRKSRC}/$@ >/dev/null \
 		|| sdiff -as -w $$(tput -T $${TERM:-vt100} cols) \
 			-o ${WRKSRC}/$@.merged \
 			${DESTDIR}/$@ \
 			${WRKSRC}/$@) \
-	|| [[ "$$?" -eq 1 ]])
+	|| [[ "$$?" -eq 1 ]]
 
 clean:
 	@rm -r ${WRKSRC}
@@ -177,9 +177,9 @@ clean:
 beforeinstall: upgrade
 .if ${UPGRADE} == "yes"
 . for _DITHEMATIC in ${DITHEMATIC}
-	(umask 077; [[ -r ${_DITHEMATIC:S|^|${WRKSRC}/|:S|$|.merged|} ]] \
+	[[ -r ${_DITHEMATIC:S|^|${WRKSRC}/|:S|$|.merged|} ]] \
 		&& cp -p ${WRKSRC}/${_DITHEMATIC}.merged ${WRKSRC}/${_DITHEMATIC} \
-		|| [[ "$$?" -eq 1 ]])
+		|| [[ "$$?" -eq 1 ]]
 . endfor
 .endif
 
