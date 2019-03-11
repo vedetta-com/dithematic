@@ -196,7 +196,7 @@ realinstall:
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
 		${_DITHEMATIC:S|^|${DESTDIR}/|}
 .endfor
-	mkdir -pm700 ${DESTDIR}${KEYDIR}
+	${INSTALL} -d -m 700 ${DESTDIR}/${KEYDIR}/private
 
 afterinstall:
 .if !empty(CRONTAB)
