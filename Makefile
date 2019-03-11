@@ -69,7 +69,6 @@ AUTHPFCONF =	${BASESYSCONFDIR:S|^/||}/authpf/authpf.allow \
 MAILCONF =	${BASESYSCONFDIR:S|^/||}/mail/smtpd.conf
 
 PDNSCONF =	${BASESYSCONFDIR:S|^/||}/pdns/pdns.conf
-KEYDIR =	${BASESYSCONFDIR:S|^/||}/ssl/dns
 
 SSHCONF =	${BASESYSCONFDIR:S|^/||}/ssh/sshd_banner \
 		${BASESYSCONFDIR:S|^/||}/ssh/sshd_config
