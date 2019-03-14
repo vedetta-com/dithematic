@@ -178,8 +178,8 @@ beforeinstall: upgrade
 .if ${UPGRADE} == "yes"
 . for _DITHEMATIC in ${DITHEMATIC}
 	[[ -r ${_DITHEMATIC:S|^|${WRKSRC}/|:S|$|.merged|} ]] \
-		&& cp -p ${WRKSRC}/${_DITHEMATIC}.merged ${WRKSRC}/${_DITHEMATIC} \
-		|| [[ "$$?" -eq 1 ]]
+	&& cp -p ${WRKSRC}/${_DITHEMATIC}.merged ${WRKSRC}/${_DITHEMATIC} \
+	|| [[ "$$?" -eq 1 ]]
 . endfor
 .endif
 
