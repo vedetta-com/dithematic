@@ -95,6 +95,7 @@ local		type=dir mode=0755
 
 # ./usr/local/bin
 bin		type=dir mode=0755
+    nsec3salt	gname=bin mode=0500
     pdns-backup	gname=bin mode=0500
     rmchangelist \
 		gname=bin mode=0500

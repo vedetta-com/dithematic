@@ -22,6 +22,7 @@
 /etc/ssh/sshd_banner
 +/var/unbound/db/root.key
 +/var/unbound/db/root.zone
+/usr/local/bin/nsec3salt
 /usr/local/bin/pdns-backup
 /usr/local/bin/rmchangelist
 /usr/local/bin/tsig-change
