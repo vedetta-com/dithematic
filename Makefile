@@ -216,7 +216,7 @@ afterinstall:
 	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
 	sed -i '/changelist.local/,$$d' ${BASESYSCONFDIR}/changelist
 	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
-	rcctl check unbound || { rcctl enable unbound; rcctl restart unbound }
+	rcctl check unbound || { rcctl enable unbound; rcctl restart unbound; }
 	mtree -qef ${BASESYSCONFDIR}/mtree/special -p / -U
 	mtree -qef ${BASESYSCONFDIR}/mtree/special.local -p / -U
 
