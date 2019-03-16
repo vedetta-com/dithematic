@@ -42,21 +42,21 @@ ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP \
 	< /home/tsig/.ssh/id_ed25519.pub
 ```
 
+Install DNS zone(s):
+```console
+# WiP
+```
+
 Run the TSIG Wizard, e.g.:
 ```console
 tsig-secret tsig.example.com && tsig-change tsig.example.com && tsig-share tsig.example.com
 tsig-secret tsig.ddns.example.com && tsig-change tsig.ddns.example.com
 ```
 
-Install DNS zone(s):
-```console
-# WiP
-```
-
 Enjoy:
 ```console
-rcctl enable nsd unbound pdns_server
-rcctl restart nsd unbound pdns_server
+rcctl enable nsd pdns_server
+rcctl restart nsd pdns_server
 ```
 
 ## Support
