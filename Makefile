@@ -38,6 +38,7 @@ DITHEMATIC =	${SCRIPT} ${SYSCONF} ${PFCONF} ${AUTHPFCONF} ${MAILCONF} \
 
 SCRIPT =	${BINDIR:S|^/||}/pdns-backup \
 		${BINDIR:S|^/||}/rmchangelist \
+		${BINDIR:S|^/||}/nsec3salt \
 		${BINDIR:S|^/||}/tsig-change \
 		${BINDIR:S|^/||}/tsig-fetch \
 		${BINDIR:S|^/||}/tsig-secret \
@@ -215,6 +216,7 @@ afterinstall:
 	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
 	sed -i '/changelist.local/,$$d' ${BASESYSCONFDIR}/changelist
 	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
+	rcctl check unbound || { rcctl enable unbound; rcctl restart unbound }
 	mtree -qef ${BASESYSCONFDIR}/mtree/special -p / -U
 	mtree -qef ${BASESYSCONFDIR}/mtree/special.local -p / -U
 
