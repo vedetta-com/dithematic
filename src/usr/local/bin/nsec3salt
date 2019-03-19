@@ -9,5 +9,5 @@ set -o nounset
 readonly SALT="$(dd if=/dev/random of=/dev/stdout count=1 bs=512 | sha1)"
 # The salt SHOULD be at least 64 bits long and unpredictable (rfc5155#section-12.1.1)
 # i.e. 2*64 bits = 16 bytes (hexadecimal characters)
-printf "%.16s\n" ${SALT}
+printf "%.16s" ${SALT}
 
