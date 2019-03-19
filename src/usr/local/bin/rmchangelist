@@ -5,7 +5,7 @@ set -o errexit
 set -o nounset
 
 # Bail out if non-privileged UID
-[ 0 = "$(id -u)" ] || exit 1
+[ 0 -eq "$(id -u)" ] || exit 1
 
 changelist_local="/etc/changelist.local"
 changelist_tmp="$(mktemp)"

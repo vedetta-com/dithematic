@@ -6,7 +6,7 @@ set -o errexit
 set -o nounset
 
 # Bail out if non-privileged UID
-[ 25353 = "$(id -u)" ] || exit 1
+[ 25353 -eq "$(id -u)" ] || exit 1
 
 KEY_NAME="$1"
 KEY_DIR="${KEY_DIR:-/etc/ssl/dns}"
