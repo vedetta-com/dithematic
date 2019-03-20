@@ -33,6 +33,10 @@ env ROLE=master DDNS=false zoneadd example.com
 env ROLE=master DDNS=true zoneadd ddns.example.com
 ```
 
+n.b.: place [zone templates](https://github.com/vedetta-com/dithematic/tree/master/src/usr/local/share/examples/dithematic) in `/var/nsd/zones/master` (or start with a blank slate.)
+
+n.b.: place existing TSIG key as `tsig.example.com`, CSK (or ZSK) as `example.com.CSK` in `/etc/ssl/dns/private` (or let the script generate new keys.)
+
 Add a [DDNS](https://tools.ietf.org/html/rfc2136) user, e.g.: `puffy`
 ```console
 user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
