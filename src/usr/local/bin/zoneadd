@@ -1,5 +1,5 @@
 #!/bin/sh
-# Add a zone: env ROLE=master DDNS=true zoneadd name
+# Add a zone: env ROLE=master DDNS=false zoneadd name
 
 set -o errexit
 set -o nounset
@@ -15,7 +15,7 @@ ZONE_DIR="${NSD_DIR}/zones/master"
 KEY_DIR="${KEY_DIR:-/etc/ssl/dns}"
 KEY_HMAC="${2:-hmac-sha512}"
 ROLE="${ROLE:-master}" # master, or slave
-DDNS=true
+DDNS="${DDNS:-false}"
 DOMAIN=$(hostname | sed "s/$(hostname -s)\.//")
 
 # New keys if missing
@@ -65,7 +65,7 @@ pdnsutil activate-zone-key ${ZONE_NAME} "${_id}"
 [ ${ZONE_NAME} = ${DOMAIN} ] \
   && { tsig-secret ${KEY_NAME}; tsig-change ${KEY_NAME}; }
 
-if [ ${DDNS} ]
+if ${DDNS}
   then
     tsig-secret ${KEY_NAME}
     pdnsutil import-tsig-key \
@@ -81,7 +81,7 @@ pdnsutil set-kind ${ZONE_NAME} ${ROLE}
 if [ "X${ROLE}" = Xmaster ]
   then
     pdnsutil unset-presigned ${ZONE_NAME}
-    if [ ${DDNS} ]
+    if ${DDNS}
       then
         # DDNS
         pdnsutil set-meta ${ZONE_NAME} ALLOW-DNSUPDATE-FROM 0.0.0.0/0,::/0
