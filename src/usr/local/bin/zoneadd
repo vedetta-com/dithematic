@@ -1,0 +1,104 @@
+#!/bin/sh
+# Add a zone: env ROLE=master DDNS=true zoneadd name
+
+set -o errexit
+set -o nounset
+
+# Bail out if non-privileged UID
+[ 0 -eq "$(id -u)" ] || exit 1
+
+ZONE_NAME="$1"
+pdnsutil list-zone ${ZONE_NAME} && exit 1
+
+NSD_DIR="${NSD_DIR:-/var/nsd}"
+ZONE_DIR="${NSD_DIR}/zones/master"
+KEY_DIR="${KEY_DIR:-/etc/ssl/dns}"
+KEY_HMAC="${2:-hmac-sha512}"
+ROLE="${ROLE:-master}" # master, or slave
+DDNS=true
+DOMAIN=$(hostname | sed "s/$(hostname -s)\.//")
+
+# New keys if missing
+KEY_NAME="${KEY_NAME:-tsig.${ZONE_NAME}}"
+CSK="${CSK:-${ZONE_NAME}.CSK}"
+DNSKEY="${DNSKEY:-${ZONE_NAME}.DNSKEY}"
+
+# NSD
+#
+if [ ! -r ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} ]
+  then
+    cp -p ${NSD_DIR}/etc/nsd.conf.zone.${DOMAIN} \
+      ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME}
+    sed -i -E "/name:|file:/ s|${DOMAIN}|${ZONE_NAME}|" \
+      ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME}
+    grep zone.${ZONE_NAME} ${NSD_DIR}/etc/nsd.conf \
+      || echo include: ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} \
+        >> ${NSD_DIR}/etc/nsd.conf
+fi
+
+# PowerDNS
+#
+[ -r ${ZONE_DIR}/${ZONE_NAME}.zone ] \
+  && pdnsutil load-zone ${ZONE_NAME} ${ZONE_DIR}/${ZONE_NAME}.zone \
+  || pdnsutil create-zone ${ZONE_NAME}
+
+pdnsutil set-meta ${ZONE_NAME} ALSO-NOTIFY 127.0.0.1:10053 [::1]:10053
+pdnsutil set-meta ${ZONE_NAME} ALLOW-AXFR-FROM 127.0.0.1 ::1
+
+pdnsutil set-meta ${ZONE_NAME} SOA-EDIT INCREMENT-WEEKS
+pdnsutil set-meta ${ZONE_NAME} SOA-EDIT-DNSUPDATE SOA-EDIT-INCREASE
+
+# DNSSEC
+#
+[ -r ${KEY_DIR}/private/${CSK} ] \
+  || (umask 077; pdnsutil generate-zone-key KSK ecdsa256 | sed '/Flags/d' \
+    > ${KEY_DIR}/private/${CSK})
+
+pdnsutil set-nsec3 ${ZONE_NAME} "1 0 333 $(nsec3salt)" inclusive
+pdnsutil import-zone-key ${ZONE_NAME} ${KEY_DIR}/private/${CSK}
+local \
+_id=$(pdnsutil list-keys ${ZONE_NAME} | awk -v name=${ZONE_NAME} '$0 ~ name { print $5 }')
+pdnsutil activate-zone-key ${ZONE_NAME} "${_id}"
+
+# TSIG
+#
+[ ${ZONE_NAME} = ${DOMAIN} ] \
+  && { tsig-secret ${KEY_NAME}; tsig-change ${KEY_NAME}; }
+
+if [ ${DDNS} ]
+  then
+    tsig-secret ${KEY_NAME}
+    pdnsutil import-tsig-key \
+      ${KEY_NAME} ${KEY_HMAC} $(cat ${KEY_DIR}/private/${KEY_NAME})
+fi
+
+pdnsutil activate-tsig-key ${ZONE_NAME} tsig.${DOMAIN} master
+pdnsutil activate-tsig-key ${ZONE_NAME} tsig.${DOMAIN} slave
+
+# Master or Slave
+pdnsutil set-kind ${ZONE_NAME} ${ROLE}
+# Slave
+if [ "X${ROLE}" = Xmaster ]
+  then
+    pdnsutil unset-presigned ${ZONE_NAME}
+    if [ ${DDNS} ]
+      then
+        # DDNS
+        pdnsutil set-meta ${ZONE_NAME} ALLOW-DNSUPDATE-FROM 0.0.0.0/0,::/0
+        pdnsutil set-meta ${ZONE_NAME} TSIG-ALLOW-DNSUPDATE ${KEY_NAME}
+        pdnsutil set-meta ${ZONE_NAME} NOTIFY-DNSUPDATE 1
+        pdnsutil set-meta ${ZONE_NAME} ALLOW-DNSUPDATE-FROM 0.0.0.0/0,::/0
+    fi
+fi
+
+# Finish
+#
+pdnsutil export-zone-dnskey ${ZONE_NAME} "${_id}" > ${KEY_DIR}/${DNSKEY}
+echo Send the DNSKEY to registrar:
+cat ${KEY_DIR}/${DNSKEY}
+
+pdnsutil rectify-zone ${ZONE_NAME}
+env EDITOR="${EDITOR:-vi}" pdnsutil edit-zone ${ZONE_NAME}
+
+echo Share the master key: tsig-share tsig.${DOMAIN}
+
