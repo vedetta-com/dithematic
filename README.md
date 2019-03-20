@@ -27,7 +27,7 @@ Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local
 make install
 ```
 
-Install DNS zone(s), e.g.: `example.com` and `ddns.example.com`
+Install DNS zone(s), e.g. on master: `example.com` and `ddns.example.com`
 ```console
 env ROLE=master DDNS=false zoneadd example.com
 env ROLE=master DDNS=true zoneadd ddns.example.com
@@ -38,7 +38,7 @@ Add a [DDNS](https://tools.ietf.org/html/rfc2136) user, e.g.: `puffy`
 user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
 ```
 
-Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers:
+Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers, e.g.: `tsig`
 ```console
 su - tsig
 ssh-keygen -t ed25519 -C tsig@example.com
@@ -48,7 +48,7 @@ ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP \
 	< /home/tsig/.ssh/id_ed25519.pub
 ```
 
-Share TSIG secrets with nameservers, e.g.: `dig.example.com`
+Share master TSIG secret with nameservers, e.g.: `dig.example.com`
 ```console
 env NS="dig.example.com" tsig-share tsig.example.com
 ```
