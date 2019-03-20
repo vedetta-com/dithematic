@@ -42,7 +42,7 @@ Add a [DDNS](https://tools.ietf.org/html/rfc2136) user, e.g.: `puffy`
 user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
 ```
 
-Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers, e.g.: `tsig`
+Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers, i.e.: `tsig`
 ```console
 su - tsig
 ssh-keygen -t ed25519 -C tsig@example.com
