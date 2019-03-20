@@ -27,7 +27,13 @@ Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local
 make install
 ```
 
-Add a [DDNS](https://tools.ietf.org/html/rfc2136) user, e.g.:
+Install DNS zone(s), e.g.: `example.com` and `ddns.example.com`
+```console
+env ROLE=master DDNS=false zoneadd example.com
+env ROLE=master DDNS=true zoneadd ddns.example.com
+```
+
+Add a [DDNS](https://tools.ietf.org/html/rfc2136) user, e.g.: `puffy`
 ```console
 user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
 ```
@@ -42,15 +48,9 @@ ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP \
 	< /home/tsig/.ssh/id_ed25519.pub
 ```
 
-Install DNS zone(s):
+Share TSIG secrets with nameservers, e.g.: `dig.example.com`
 ```console
-# WiP
-```
-
-Run the TSIG Wizard, e.g.:
-```console
-tsig-secret tsig.example.com && tsig-change tsig.example.com && tsig-share tsig.example.com
-tsig-secret tsig.ddns.example.com && tsig-change tsig.ddns.example.com
+env NS="dig.example.com" tsig-share tsig.example.com
 ```
 
 Enjoy:
