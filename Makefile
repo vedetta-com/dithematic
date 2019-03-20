@@ -42,7 +42,9 @@ SCRIPT =	${BINDIR:S|^/||}/pdns-backup \
 		${BINDIR:S|^/||}/tsig-change \
 		${BINDIR:S|^/||}/tsig-fetch \
 		${BINDIR:S|^/||}/tsig-secret \
-		${BINDIR:S|^/||}/tsig-share
+		${BINDIR:S|^/||}/tsig-share \
+		${BINDIR:S|^/||}/zoneadd \
+		${BINDIR:S|^/||}/zonedel
 
 SYSCONF =	${BASESYSCONFDIR:S|^/||}/changelist.local \
 		${BASESYSCONFDIR:S|^/||}/daily.local \

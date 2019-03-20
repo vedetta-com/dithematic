@@ -29,6 +29,8 @@
 /usr/local/bin/tsig-fetch
 /usr/local/bin/tsig-secret
 /usr/local/bin/tsig-share
+/usr/local/bin/zoneadd
+/usr/local/bin/zonedel
 +/var/nsd/etc/nsd.conf.*
 /var/nsd/zones/master/*.zone
 +/var/pdns/*.backup

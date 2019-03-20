@@ -103,6 +103,8 @@ bin		type=dir mode=0755
     tsig-fetch	gname=bin mode=0555
     tsig-secret	gname=bin mode=0500
     tsig-share	gname=bin mode=0500
+    zoneadd	gname=bin mode=0500
+    zonedel	gname=bin mode=0500
 # ./usr/local/bin
 ..
 
