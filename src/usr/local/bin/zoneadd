@@ -100,5 +100,5 @@ cat ${KEY_DIR}/${DNSKEY}
 pdnsutil rectify-zone ${ZONE_NAME}
 env EDITOR="${EDITOR:-vi}" pdnsutil edit-zone ${ZONE_NAME}
 
-echo Share the master key: tsig-share tsig.${DOMAIN}
+echo Add ${ZONE_NAME} to all nameservers and share the master key: tsig-share tsig.${DOMAIN}
 
