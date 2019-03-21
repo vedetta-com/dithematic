@@ -50,6 +50,7 @@ exit
 ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP \
 	"umask 077; cat - >> /home/tsig/.ssh/authorized_keys" \
 	< /home/tsig/.ssh/id_ed25519.pub
+rcctl restart sshd
 ```
 
 Share master TSIG secret with nameservers, e.g.: `dig.example.com`
