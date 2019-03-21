@@ -10,9 +10,9 @@
 /etc/pf.conf.anchor.block
 /etc/pf.conf.anchor.icmp
 /etc/pf.conf.table.ban
+/etc/pf.conf.table.dns
 /etc/pf.conf.table.martians
 /etc/pf.conf.table.msa
-/etc/pf.conf.table.slavedns
 /etc/motd.authpf
 /etc/authpf/authpf.*
 /etc/pdns/pdns.conf
