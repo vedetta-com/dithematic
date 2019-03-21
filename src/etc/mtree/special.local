@@ -177,15 +177,9 @@ unbound		type=dir mode=0755
 # ./var/unbound/db
 /set type=file mode=0644
 db		type=dir uname=root gname=_unbound mode=0775
-    root.key	uname=_unbound gname=_unbound
+    root.key	uname=_unbound gname=_unbound optional
+    root.zone	uname=_unbound gname=_unbound optional
 # ./var/unbound/db
-..
-
-
-# ./var/unbound/etc
-etc		type=dir mode=0755
-    root.hints
-# ./var/unbound/etc
 ..
 
 # ./var/unbound
