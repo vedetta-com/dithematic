@@ -48,7 +48,7 @@ su - tsig
 ssh-keygen -t ed25519 -C tsig@example.com
 exit
 ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP \
-	"umask 077; cat - >> /home/tsig/.ssh/authorized_keys" \
+	"cat - >> /home/tsig/.ssh/authorized_keys" \
 	< /home/tsig/.ssh/id_ed25519.pub
 rcctl restart sshd
 ```
