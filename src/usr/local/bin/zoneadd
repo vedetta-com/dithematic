@@ -87,7 +87,6 @@ if [ "X${ROLE}" = Xmaster ]
         pdnsutil set-meta ${ZONE_NAME} ALLOW-DNSUPDATE-FROM 0.0.0.0/0,::/0
         pdnsutil set-meta ${ZONE_NAME} TSIG-ALLOW-DNSUPDATE ${KEY_NAME}
         pdnsutil set-meta ${ZONE_NAME} NOTIFY-DNSUPDATE 1
-        pdnsutil set-meta ${ZONE_NAME} ALLOW-DNSUPDATE-FROM 0.0.0.0/0,::/0
     fi
 fi
 
