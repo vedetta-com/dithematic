@@ -42,10 +42,6 @@ fi
   && pdnsutil load-zone ${ZONE_NAME} ${ZONE_DIR}/${ZONE_NAME}.zone \
   || pdnsutil create-zone ${ZONE_NAME}
 
-pdnsutil set-meta ${ZONE_NAME} ALSO-NOTIFY 127.0.0.1:10053 [::1]:10053
-pdnsutil set-meta ${ZONE_NAME} ALLOW-AXFR-FROM 127.0.0.1 ::1
-
-pdnsutil set-meta ${ZONE_NAME} SOA-EDIT INCREMENT-WEEKS
 pdnsutil set-meta ${ZONE_NAME} SOA-EDIT-DNSUPDATE SOA-EDIT-INCREASE
 
 # DNSSEC
