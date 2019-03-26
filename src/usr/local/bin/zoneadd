@@ -63,7 +63,7 @@ if ${DDNS}
   then
     tsig-secret ${KEY_NAME}
     pdnsutil import-tsig-key \
-      ${KEY_NAME} ${KEY_HMAC} $(cat ${KEY_DIR}/private/${KEY_NAME})
+      ${KEY_NAME} ${KEY_HMAC} $(<${KEY_DIR}/private/${KEY_NAME})
 fi
 
 pdnsutil activate-tsig-key ${ZONE_NAME} tsig.${DOMAIN} master
