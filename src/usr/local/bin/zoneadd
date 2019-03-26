@@ -42,8 +42,6 @@ fi
   && pdnsutil load-zone ${ZONE_NAME} ${ZONE_DIR}/${ZONE_NAME}.zone \
   || pdnsutil create-zone ${ZONE_NAME}
 
-pdnsutil set-meta ${ZONE_NAME} SOA-EDIT-DNSUPDATE SOA-EDIT-INCREASE
-
 # DNSSEC
 #
 [ -r ${KEY_DIR}/private/${CSK} ] \
@@ -85,6 +83,7 @@ if [ "X${ROLE}" = Xmaster ]
         pdnsutil set-meta ${ZONE_NAME} NOTIFY-DNSUPDATE 1
     fi
 fi
+pdnsutil set-meta ${ZONE_NAME} SOA-EDIT-DNSUPDATE SOA-EDIT-INCREASE
 
 # Finish
 #
