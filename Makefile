@@ -185,6 +185,7 @@ beforeinstall: upgrade
 	|| [[ "$$?" -eq 1 ]]
 . endfor
 .endif
+	env PKG_PATH= pkg_info powerdns > /dev/null || pkg_add powerdns
 
 realinstall:
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
