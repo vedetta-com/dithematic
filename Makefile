@@ -224,6 +224,7 @@ afterinstall:
 	pfctl -f /etc/pf.conf
 	rcctl disable check_quotas sndiod
 	rcctl check unbound || { rcctl enable unbound; rcctl restart unbound; }
+	sed -i '/^console/s/ secure//' ${BASESYSCONFDIR}/ttys
 	mtree -qef ${BASESYSCONFDIR}/mtree/special -p / -U
 	mtree -qef ${BASESYSCONFDIR}/mtree/special.local -p / -U
 
