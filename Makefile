@@ -196,9 +196,8 @@ realinstall:
 	${INSTALL} -S -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
 		${_DITHEMATIC:S|^|${DESTDIR}/|}
-	${INSTALL} -d -m 750 -o _powerdns ${VARBASE}/pdns
-
 .endfor
+	${INSTALL} -d -m 750 -o _powerdns ${VARBASE}/pdns
 
 afterinstall:
 .if !empty(CRONTAB)
