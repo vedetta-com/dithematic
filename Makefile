@@ -53,7 +53,6 @@ SYSCONF =	${BASESYSCONFDIR:S|^/||}/changelist.local \
 		${BASESYSCONFDIR:S|^/||}/motd.authpf \
 		${BASESYSCONFDIR:S|^/||}/resolv.conf \
 		${BASESYSCONFDIR:S|^/||}/sysctl.conf \
-		${BASESYSCONFDIR:S|^/||}/weekly.local
 
 PFCONF =	${BASESYSCONFDIR:S|^/||}/pf.conf \
 		${BASESYSCONFDIR:S|^/||}/pf.conf.anchor.block \
@@ -137,6 +136,7 @@ config:
 		-e 's|2001:0db8::4|${SLAVE_IPv6}|g' \
 		{} +
 .if ${MASTER} != "yes"
+	SYSCONF+=${BASESYSCONFDIR:S|^/||}/weekly.local
 	sed -i \
 		-e 's|^master=yes|#master=yes|' \
 		-e 's|^#slave=yes|slave=yes|' \
@@ -193,7 +193,7 @@ realinstall:
 	${INSTALL} -S -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${EXAMPLES:S|^|${.CURDIR}/src/|} ${EXAMPLESDIR}
 .for _DITHEMATIC in ${DITHEMATIC:N*cron/tabs*}
-	${INSTALL} -S -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
+	${INSTALL} -S -o ${LOCALEOWN} -g ${LOCALEOWN} -m 440 \
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
 		${_DITHEMATIC:S|^|${DESTDIR}/|}
 .endfor
@@ -220,12 +220,12 @@ afterinstall:
 	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
 	sed -i '/changelist.local/,$$d' ${BASESYSCONFDIR}/changelist
 	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
-	pfctl -f /etc/pf.conf
-	rcctl disable check_quotas sndiod
-	rcctl check unbound || { rcctl enable unbound; rcctl restart unbound; }
 	sed -i '/^console/s/ secure//' ${BASESYSCONFDIR}/ttys
 	mtree -qef ${BASESYSCONFDIR}/mtree/special -p / -U
 	mtree -qef ${BASESYSCONFDIR}/mtree/special.local -p / -U
+	pfctl -f /etc/pf.conf
+	rcctl disable check_quotas sndiod
+	rcctl check unbound || { rcctl enable unbound; rcctl restart unbound; }
 
 .PHONY: upgrade
 .USE: upgrade
