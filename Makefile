@@ -52,7 +52,7 @@ SYSCONF =	${BASESYSCONFDIR:S|^/||}/changelist.local \
 		${BASESYSCONFDIR:S|^/||}/doas.conf \
 		${BASESYSCONFDIR:S|^/||}/motd.authpf \
 		${BASESYSCONFDIR:S|^/||}/resolv.conf \
-		${BASESYSCONFDIR:S|^/||}/sysctl.conf \
+		${BASESYSCONFDIR:S|^/||}/sysctl.conf
 
 PFCONF =	${BASESYSCONFDIR:S|^/||}/pf.conf \
 		${BASESYSCONFDIR:S|^/||}/pf.conf.anchor.block \
