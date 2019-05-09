@@ -56,12 +56,15 @@ pdnsutil activate-zone-key ${ZONE_NAME} "${_id}"
 
 # TSIG
 #
-[ ${ZONE_NAME} = ${DOMAIN} ] &&
-  { tsig-secret ${KEY_NAME}; tsig-change ${KEY_NAME}; }
+if [ ${ZONE_NAME} = ${DOMAIN} ]
+  then
+    [ -r ${KEY_DIR}/private/${KEY_NAME} ] || tsig-secret ${KEY_NAME}
+    tsig-change ${KEY_NAME}
+fi
 
 if ${DDNS}
   then
-    tsig-secret ${KEY_NAME}
+    [ -r ${KEY_DIR}/private/${KEY_NAME} ] || tsig-secret ${KEY_NAME}
     pdnsutil import-tsig-key \
       ${KEY_NAME} ${KEY_HMAC} $(<${KEY_DIR}/private/${KEY_NAME})
 fi
