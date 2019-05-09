@@ -31,21 +31,21 @@ if [ ! -r ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} ]
       ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME}
     sed -i -E "/name:|file:/ s|${DOMAIN}|${ZONE_NAME}|" \
       ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME}
-    grep zone.${ZONE_NAME} ${NSD_DIR}/etc/nsd.conf \
-      || echo include: ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} \
+    grep zone.${ZONE_NAME} ${NSD_DIR}/etc/nsd.conf ||
+      echo include: ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} \
         >> ${NSD_DIR}/etc/nsd.conf
 fi
 
 # PowerDNS
 #
-[ -r ${ZONE_DIR}/${ZONE_NAME}.zone ] \
-  && pdnsutil load-zone ${ZONE_NAME} ${ZONE_DIR}/${ZONE_NAME}.zone \
-  || pdnsutil create-zone ${ZONE_NAME}
+[ -r ${ZONE_DIR}/${ZONE_NAME}.zone ] &&
+  pdnsutil load-zone ${ZONE_NAME} ${ZONE_DIR}/${ZONE_NAME}.zone ||
+    pdnsutil create-zone ${ZONE_NAME}
 
 # DNSSEC
 #
-[ -r ${KEY_DIR}/private/${CSK} ] \
-  || (umask 077; pdnsutil generate-zone-key KSK ecdsa256 | sed '/Flags/d' \
+[ -r ${KEY_DIR}/private/${CSK} ] ||
+  (umask 077; pdnsutil generate-zone-key KSK ecdsa256 | sed '/Flags/d' \
     > ${KEY_DIR}/private/${CSK})
 
 pdnsutil set-nsec3 ${ZONE_NAME} "1 0 333 $(nsec3salt)" inclusive
@@ -56,8 +56,8 @@ pdnsutil activate-zone-key ${ZONE_NAME} "${_id}"
 
 # TSIG
 #
-[ ${ZONE_NAME} = ${DOMAIN} ] \
-  && { tsig-secret ${KEY_NAME}; tsig-change ${KEY_NAME}; }
+[ ${ZONE_NAME} = ${DOMAIN} ] &&
+  { tsig-secret ${KEY_NAME}; tsig-change ${KEY_NAME}; }
 
 if ${DDNS}
   then
