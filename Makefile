@@ -193,7 +193,7 @@ realinstall:
 	${INSTALL} -S -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
 		${EXAMPLES:S|^|${.CURDIR}/src/|} ${EXAMPLESDIR}
 .for _DITHEMATIC in ${DITHEMATIC:N*cron/tabs*}
-	${INSTALL} -S -o ${LOCALEOWN} -g ${LOCALEOWN} -m 440 \
+	${INSTALL} -S -o ${LOCALEOWN} -g ${LOCALEGRP} -m 440 \
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
 		${_DITHEMATIC:S|^|${DESTDIR}/|}
 .endfor
