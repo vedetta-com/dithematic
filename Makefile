@@ -105,6 +105,10 @@ HOSTNAME !!=	hostname
 WRKSRC ?=	${HOSTNAME:S|^|${.CURDIR}/|}
 RELEASE !!=	uname -r
 
+PKG =		powerdns \
+		ldns-utils \
+		drill
+
 #-8<-----------	[ cut here ] --------------------------------------------------^
 
 .if exists(Makefile.local)
@@ -178,6 +182,9 @@ clean:
 	@rm -r ${WRKSRC}
 
 beforeinstall: upgrade
+.for _PKG in ${PKG}
+	env PKG_PATH= pkg_info ${_PKG} > /dev/null || pkg_add ${_PKG}
+.endfor
 .if ${UPGRADE} == "yes"
 . for _DITHEMATIC in ${DITHEMATIC}
 	[[ -r ${_DITHEMATIC:S|^|${WRKSRC}/|:S|$|.merged|} ]] \
@@ -185,7 +192,6 @@ beforeinstall: upgrade
 	|| [[ "$$?" -eq 1 ]]
 . endfor
 .endif
-	env PKG_PATH= pkg_info powerdns > /dev/null || pkg_add powerdns
 
 realinstall:
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}

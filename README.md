@@ -17,11 +17,6 @@ Dithematic configuration and guide for self-hosting [DNS](https://powerdns.org/d
 
 *Minimum requirements*: 512MB RAM, [10GB SSD](src/usr/local/share/doc/dithematic/disklabel)
 
-Install packages:
-```console
-pkg_add powerdns ldns-utils drill
-```
-
 Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local":
 ```console
 make install
