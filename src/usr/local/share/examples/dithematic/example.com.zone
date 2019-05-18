@@ -43,6 +43,8 @@ _openpgpkey._tcp.example.com.	86400	IN	SRV	0 0 443 wkd.example.com.
 obsd._domainkey.example.com.	86400	IN	TXT	"v=DKIM1; k=rsa; p=abcd"
 _dmarc.example.com.	86400	IN	TXT	"v=DMARC1; p=reject; pct=100; rua=mailto:dmarcreports@example.com"
 _mta-sts.example.com.	86400	IN	TXT	"v=STSv1; id=20190515085700Z;"
+_mta-sts.mercury.example.com.	86400	IN	CNAME	_mta-sts.example.com.
+_mta-sts.hermes.example.com.	86400	IN	CNAME	_mta-sts.example.com.
 _smtp._tls.example.com.	86400	IN	TXT	"v=TLSRPTv1; rua=mailto:tlsreports@example.com"
 autoconfig.example.com.	86400	IN	CNAME	mercury.example.com.
 wkd.example.com.	86400	IN	CNAME	mercury.example.com.
