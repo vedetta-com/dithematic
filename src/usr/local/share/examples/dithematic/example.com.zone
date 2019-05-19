@@ -35,9 +35,10 @@ mercury.example.com.	86400	IN	AAAA	2001:0db8::1
 mercury.example.com.	86400	IN	SSHFP	4 1 abcd
 mercury.example.com.	86400	IN	SSHFP	4 2 abcd
 _pop3._tcp.example.com.	86400	IN	SRV	0 0 0 .
-_submission._tcp.example.com.	86400	IN	SRV	0 1 587 mercury.example.com.
-_imap._tcp.example.com.	86400	IN	SRV	0 0 0 .
 _pop3s._tcp.example.com.	86400	IN	SRV	0 0 0 .
+_submission._tcp.example.com.	86400	IN	SRV	0 1 465 mercury.example.com.
+_submission._tcp.example.com.	86400	IN	SRV	5 1 587 mercury.example.com.
+_imap._tcp.example.com.	86400	IN	SRV	0 0 0 .
 _imaps._tcp.example.com.	86400	IN	SRV	0 1 993 mercury.example.com.
 _openpgpkey._tcp.example.com.	86400	IN	SRV	0 0 443 wkd.example.com.
 obsd._domainkey.example.com.	86400	IN	TXT	"v=DKIM1; k=rsa; p=abcd"
