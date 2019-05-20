@@ -144,7 +144,6 @@ config:
 		-e 's|2001:0db8::4|${SLAVE_IPv6}|g' \
 		{} +
 .if ${MASTER} != "yes"
-	SYSCONF+=${BASESYSCONFDIR:S|^/||}/weekly.local
 	sed -i \
 		-e 's|^master=yes|#master=yes|' \
 		-e 's|^#slave=yes|slave=yes|' \
