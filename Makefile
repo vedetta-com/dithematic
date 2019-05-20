@@ -117,6 +117,10 @@ PKG =		powerdns \
 
 # Specifications (target rules)
 
+.if ${MASTER} == "yes"
+SYSCONF +=	${BASESYSCONFDIR:S|^/||}/weekly.local
+.endif
+
 .if defined(UPGRADE) && ${UPGRADE} == "yes"
 upgrade: config .WAIT ${DITHEMATIC}
 	@echo Upgrade
