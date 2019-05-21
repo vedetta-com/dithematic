@@ -50,7 +50,7 @@ Share master TSIG secret with nameservers, e.g.: `dig.example.com`
 env NS="dig.example.com" tsig-share tsig.example.com
 ```
 
-[DNS UPDATE](https://tools.ietf.org/html/rfc2136) allowed IPs are managed with authpf(8) i.e. user "puffy" first needs to SSH login on the master name server host to authenticate the IP from which they will next update ddns.example.com zone using e.g. nsupdate (pkg_add ics-bind) or dnspython (pkg_add py-dnspython) on their device (skip if not using dynamic DNS)
+[DNS UPDATE](https://tools.ietf.org/html/rfc2136) allowed IPs are managed with authpf(8) i.e. user "puffy" first needs to SSH login on the master name server host to authenticate the IP from which they will next update ddns.example.com zone using e.g. nsupdate (`pkg_add ics-bind`) or dnspython (`pkg_add py-dnspython`) on their device (skip if not using dynamic DNS)
 ```console
 user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
 ```
