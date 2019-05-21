@@ -25,6 +25,9 @@ DNSKEY="${DNSKEY:-${ZONE_NAME}.DNSKEY}"
 
 # NSD
 #
+[ ${ZONE_NAME} = ${DOMAIN} ] &&
+  sed -i '/zone.${DOMAIN}/ s|^#include|include|' ${NSD_DIR}/etc/nsd.conf
+
 if [ ! -r ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} ]
   then
     cp -p ${NSD_DIR}/etc/nsd.conf.zone.${DOMAIN} \
@@ -34,6 +37,8 @@ if [ ! -r ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} ]
     grep zone.${ZONE_NAME} ${NSD_DIR}/etc/nsd.conf ||
       echo include: ${NSD_DIR}/etc/nsd.conf.zone.${ZONE_NAME} \
         >> ${NSD_DIR}/etc/nsd.conf
+  else
+    sed -i '/zone.${DOMAIN}/ s|^#include|include|' ${NSD_DIR}/etc/nsd.conf
 fi
 
 # PowerDNS

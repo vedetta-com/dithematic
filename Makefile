@@ -18,7 +18,7 @@ EGRESS =	vio0
 
 MASTER =	yes
 DOMAIN_NAME =	example.com
-DDNS =		ddns
+DDNS_NAME =	ddns
 
 MASTER_HOST =	dot
 MASTER_IPv4 =	203.0.113.3
@@ -82,7 +82,6 @@ NSDCONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.master.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.PowerDNS \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.${DOMAIN_NAME} \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DDNS}.${DOMAIN_NAME} \
 		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DOMAIN_NAME}
 
 FREECONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.1984.is \
@@ -121,6 +120,10 @@ PKG =		powerdns \
 SYSCONF +=	${BASESYSCONFDIR:S|^/||}/weekly.local
 .endif
 
+.if !empty(DDNS_NAME)
+NSDCONF +=	${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DDNS_NAME}.${DOMAIN_NAME}
+.endif
+
 .if defined(UPGRADE) && ${UPGRADE} == "yes"
 upgrade: config .WAIT ${DITHEMATIC}
 	@echo Upgrade
@@ -135,7 +138,6 @@ config:
 	find ${WRKSRC} -type f -exec sed -i \
 		-e 's|vio0|${EGRESS}|g' \
 		-e 's|example.com|${DOMAIN_NAME}|g' \
-		-e 's|ddns|${DDNS}|g' \
 		-e 's|dot|${MASTER_HOST}|g' \
 		-e 's|203.0.113.3|${MASTER_IPv4}|g' \
 		-e 's|2001:0db8::3|${MASTER_IPv6}|g' \
@@ -143,6 +145,11 @@ config:
 		-e 's|203.0.113.4|${SLAVE_IPv4}|g' \
 		-e 's|2001:0db8::4|${SLAVE_IPv6}|g' \
 		{} +
+.if !empty(DDNS_NAME)
+	find ${WRKSRC} -type f -exec sed -i \
+		-e 's|ddns|${DDNS_NAME}|g' \
+		{} +
+.endif
 .if ${MASTER} != "yes"
 	sed -i \
 		-e 's|^master=yes|#master=yes|' \
@@ -167,8 +174,13 @@ config:
 	@echo Super-Master
 .endif
 .for _NSDCONF in ${NSDCONF:N*nsd.conf:N*.PowerDNS}
-	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|${DDNS}|ddns|:S|^|${WRKSRC}/|} \
+. if !empty(DDNS_NAME)
+	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|${DDNS_NAME}|ddns|:S|^|${WRKSRC}/|} \
 		${_NSDCONF:S|^|${WRKSRC}/|}
+. else
+	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|^|${WRKSRC}/|} \
+		${_NSDCONF:S|^|${WRKSRC}/|}
+. endif
 .endfor
 	@echo Configured
 
@@ -185,6 +197,7 @@ clean:
 	@rm -r ${WRKSRC}
 
 beforeinstall: upgrade
+	rcctl stop nsd pdns_server || [[ "$$?" -eq 1 ]]
 .for _PKG in ${PKG}
 	env PKG_PATH= pkg_info ${_PKG} > /dev/null || pkg_add ${_PKG}
 .endfor
@@ -217,24 +230,26 @@ afterinstall:
 .endif
 	[[ -r ${VARBASE}/nsd/etc/nsd_control.pem ]] || nsd-control-setup
 	[[ -r ${VARBASE}/pdns/pdns.sqlite ]] \
-	|| sqlite3 ${VARBASE}/pdns/pdns.sqlite \
-		-init ${PREFIX}/share/doc/pdns/schema.sqlite3.sql ".exit"
-	[[ -r ${VARBASE}/pdns/pdnssec.sqlite ]] \
-	|| sqlite3 ${VARBASE}/pdns/pdnssec.sqlite \
-		-init ${PREFIX}/share/doc/pdns/dnssec-3.x_to_3.4.0_schema.sqlite3.sql ".exit"
+		|| sqlite3 ${VARBASE}/pdns/pdns.sqlite \
+			-init ${PREFIX}/share/doc/pdns/schema.sqlite3.sql ".exit"
 	group info -e tsig || user info -e tsig \
-	|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -m tsig; \
-		mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }
+		|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -m tsig; \
+			mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }
 	[[ -r ${BASESYSCONFDIR}/changelist-${RELEASE} ]] \
-	|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
+		|| cp ${BASESYSCONFDIR}/changelist ${BASESYSCONFDIR}/changelist-${RELEASE}
 	sed -i '/changelist.local/,$$d' ${BASESYSCONFDIR}/changelist
 	cat ${BASESYSCONFDIR}/changelist.local >> ${BASESYSCONFDIR}/changelist
 	sed -i '/^console/s/ secure//' ${BASESYSCONFDIR}/ttys
 	mtree -qef ${BASESYSCONFDIR}/mtree/special -p / -U
 	mtree -qef ${BASESYSCONFDIR}/mtree/special.local -p / -U
+	[[ -r ${BASESYSCONFDIR}/ssl/dns/private/tsig.${DOMAIN_NAME} ]] \
+		|| ${PREFIX}/bin/tsig-secret tsig.${DOMAIN_NAME}
+	[[ -r ${VARBASE}/nsd/etc/tsig.${DOMAIN_NAME} ]] \
+		|| ${PREFIX}/bin/tsig-change tsig.${DOMAIN_NAME}
 	pfctl -f /etc/pf.conf
 	rcctl disable check_quotas sndiod
-	rcctl check unbound || { rcctl enable unbound; rcctl restart unbound; }
+	rcctl enable unbound nsd pdns_server
+	rcctl restart unbound nsd pdns_server
 
 .PHONY: upgrade
 .USE: upgrade

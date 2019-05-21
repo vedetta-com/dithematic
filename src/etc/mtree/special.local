@@ -108,6 +108,26 @@ bin		type=dir mode=0755
 # ./usr/local/bin
 ..
 
+
+# ./usr/local/share
+share		type=dir mode=0755
+
+# ./usr/local/share/doc
+doc		type=dir mode=0755
+
+# ./usr/local/share/doc/dithematic
+dithematic	type=dir mode=0755
+    validate.tsig \
+		mode=0644
+# ./usr/local/share/doc/dithematic
+..
+
+# ./usr/local/share/doc
+..
+
+# ./usr/local/share
+..
+
 # ./usr/local
 ..
 
@@ -142,7 +162,7 @@ db		type=dir gname=_nsd mode=0775
 
 # ./var/nsd/etc
 etc		type=dir gname=_nsd mode=0750
-    nsd.conf.*	gname=_nsd mode=0640
+    nsd.conf*	gname=_nsd mode=0640
 # ./var/nsd/etc
 ..
 

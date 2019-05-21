@@ -22,35 +22,37 @@ Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local
 make install
 ```
 
+*n.b.* rename and place [zone templates](https://github.com/vedetta-com/dithematic/tree/master/src/usr/local/share/examples/dithematic) in `/var/nsd/zones/master` (or start with a blank slate.)
+
 Install DNS zone(s), e.g. on master: `example.com` and `ddns.example.com`
 ```console
 env ROLE=master DDNS=false zoneadd example.com
 env ROLE=master DDNS=true zoneadd ddns.example.com
 ```
 
-n.b.: place [zone templates](https://github.com/vedetta-com/dithematic/tree/master/src/usr/local/share/examples/dithematic) in `/var/nsd/zones/master` (or start with a blank slate.)
+*n.b.* place existing TSIG key as `tsig.example.com`, CSK (or ZSK) as `example.com.CSK` in `/etc/ssl/dns/private` (or let [`zoneadd`](src/usr/local/bin/zoneadd) generate new keys.)
 
-n.b.: place existing TSIG key as `tsig.example.com`, CSK (or ZSK) as `example.com.CSK` in `/etc/ssl/dns/private` (or let `zoneadd` generate new keys.)
-
-Add a [DDNS](https://tools.ietf.org/html/rfc2136) user, e.g.: `puffy`
-```console
-user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
-```
-
-Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all nameservers, i.e.: `tsig`
+Setup the [TSIG](https://tools.ietf.org/html/rfc2845) user on all dithematic nameservers, i.e. `tsig`
 ```console
 su - tsig
 ssh-keygen -t ed25519 -C tsig@example.com
 exit
-ssh -i /home/tsig/.ssh/id_ed25519 -l tsig $IP \
-	"cat - >> /home/tsig/.ssh/authorized_keys" \
-	< /home/tsig/.ssh/id_ed25519.pub
-rcctl restart sshd
+```
+
+Share TSIG user's public key with all dithematic slave nameservers, and update "known_hosts"
+```console
+sh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
+sh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
 ```
 
 Share master TSIG secret with nameservers, e.g.: `dig.example.com`
 ```console
 env NS="dig.example.com" tsig-share tsig.example.com
+```
+
+[DNS UPDATE](https://tools.ietf.org/html/rfc2136) allowed IPs are managed with authpf(8) i.e. user "puffy" first needs to SSH login on the master name server host to authenticate the IP from which they will next update ddns.example.com zone using e.g. nsupdate (pkg_add ics-bind) or dnspython (pkg_add py-dnspython) on their device (skip if not using dynamic DNS)
+```console
+user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
 ```
 
 Enjoy:
