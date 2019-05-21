@@ -15,10 +15,37 @@ Dithematic configuration and guide for self-hosting [DNS](https://powerdns.org/d
 
 ## Getting started
 
-*Minimum requirements*: 512MB RAM, [10GB SSD](src/usr/local/share/doc/dithematic/disklabel)
+*Minimum requirements*:
+- 512MB RAM, [10GB SSD](src/usr/local/share/doc/dithematic/disklabel)
+- reverse DNS (record type PTR) for each nameserver IP configured on hosting provider, with the primary DOMAIN_NAME
 
-Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local":
+Grab a copy of this repository, and put overrides in "[Makefile](Makefile).local" e.g.
 ```console
+# Makefile.local
+
+EGRESS =	vio0
+
+MASTER =	yes
+DOMAIN_NAME =	example.com
+
+MASTER_HOST =	dot
+MASTER_IPv4 =	203.0.113.3
+MASTER_IPv6 =	2001:0db8::3
+
+SLAVE_HOST =	dig
+SLAVE_IPv4 =	203.0.113.4
+SLAVE_IPv6 =	2001:0db8::4
+
+UPGRADE =	yes
+```
+
+Test
+```sh
+make beforeinstall
+```
+
+Install
+```sh
 make install
 ```
 
