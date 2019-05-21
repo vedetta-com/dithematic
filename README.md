@@ -41,8 +41,8 @@ exit
 
 Share TSIG user's public key with all dithematic slave nameservers, and update "known_hosts"
 ```console
-sh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
-sh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
+ssh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
+ssh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
 ```
 
 Share master TSIG secret with nameservers, e.g.: `dig.example.com`
