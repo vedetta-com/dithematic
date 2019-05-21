@@ -5,5 +5,5 @@ swap		1G
 /usr		2G
 /usr/X11R6	512M
 /usr/local	2G
-/home		1G
+/home		512M
 /var		2G-*
