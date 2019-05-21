@@ -18,7 +18,6 @@ EGRESS =	vio0
 
 MASTER =	yes
 DOMAIN_NAME =	example.com
-DDNS_NAME =	ddns
 
 MASTER_HOST =	dot
 MASTER_IPv4 =	203.0.113.3
@@ -120,10 +119,6 @@ PKG =		powerdns \
 SYSCONF +=	${BASESYSCONFDIR:S|^/||}/weekly.local
 .endif
 
-.if !empty(DDNS_NAME)
-NSDCONF +=	${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DDNS_NAME}.${DOMAIN_NAME}
-.endif
-
 .if defined(UPGRADE) && ${UPGRADE} == "yes"
 upgrade: config .WAIT ${DITHEMATIC}
 	@echo Upgrade
@@ -145,11 +140,6 @@ config:
 		-e 's|203.0.113.4|${SLAVE_IPv4}|g' \
 		-e 's|2001:0db8::4|${SLAVE_IPv6}|g' \
 		{} +
-.if !empty(DDNS_NAME)
-	find ${WRKSRC} -type f -exec sed -i \
-		-e 's|ddns|${DDNS_NAME}|g' \
-		{} +
-.endif
 .if ${MASTER} != "yes"
 	sed -i \
 		-e 's|^master=yes|#master=yes|' \
@@ -174,13 +164,8 @@ config:
 	@echo Super-Master
 .endif
 .for _NSDCONF in ${NSDCONF:N*nsd.conf:N*.PowerDNS}
-. if !empty(DDNS_NAME)
-	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|${DDNS_NAME}|ddns|:S|^|${WRKSRC}/|} \
-		${_NSDCONF:S|^|${WRKSRC}/|}
-. else
 	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|^|${WRKSRC}/|} \
 		${_NSDCONF:S|^|${WRKSRC}/|}
-. endif
 .endfor
 	@echo Configured
 
