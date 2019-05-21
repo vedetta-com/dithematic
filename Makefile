@@ -163,10 +163,12 @@ config:
 .else
 	@echo Super-Master
 .endif
-.for _NSDCONF in ${NSDCONF:N*nsd.conf:N*.PowerDNS}
+.if ${DOMAIN_NAME} != "example.com"
+. for _NSDCONF in ${NSDCONF:N*nsd.conf:N*.PowerDNS}
 	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|^|${WRKSRC}/|} \
 		${_NSDCONF:S|^|${WRKSRC}/|}
-.endfor
+. endfor
+.endif
 	@echo Configured
 
 ${DITHEMATIC}:
