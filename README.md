@@ -15,7 +15,7 @@ Dithematic configuration and guide for self-hosting [DNS](https://powerdns.org/d
 
 ## Getting started
 
-*Minimum requirements*:
+*Minimum requirements*
 - 512MB RAM, [10GB SSD](src/usr/local/share/doc/dithematic/disklabel)
 - reverse DNS (record type PTR) for each nameserver IP configured on hosting provider, with the primary DOMAIN_NAME
 
@@ -38,6 +38,8 @@ SLAVE_IPv6 =	2001:0db8::4
 
 UPGRADE =	yes
 ```
+
+*n.b.* UPGRADE uses [`sdiff`](https://man.openbsd.org/sdiff) side-by-side diff (with *new* on the right side)
 
 Test
 ```sh
@@ -69,7 +71,7 @@ exit
 Share TSIG user's public key with all dithematic slave nameservers, and update "known_hosts"
 ```console
 ssh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
-ssh -4 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
+ssh -6 -i /home/tsig/.ssh/id_ed25519 -l tsig dig.example.com "exit"
 ```
 
 Share master TSIG secret with nameservers, e.g.: `dig.example.com`
