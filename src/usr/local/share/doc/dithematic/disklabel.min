@@ -4,5 +4,5 @@ swap		1G
 /tmp		1G
 /usr		1300M
 /usr/local	1G
-/home		8M
+/home		512M
 /var		2G-*
