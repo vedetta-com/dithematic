@@ -231,6 +231,7 @@ afterinstall:
 	rcctl disable check_quotas sndiod
 	rcctl enable unbound nsd pdns_server
 	rcctl restart unbound nsd pdns_server
+	rcctl reload sshd
 
 .PHONY: upgrade
 .USE: upgrade
