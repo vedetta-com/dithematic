@@ -2,9 +2,8 @@
 
 # Put overrides in "Makefile.local"
 
-PREFIX ?=	/usr/local
 GH_PROJECT ?=	dithematic
-#MAN =		man/${SCRIPT}.8
+PREFIX ?=	/usr/local
 MANDIR ?=	${PREFIX}/man/man
 BINDIR ?=	${PREFIX}/bin
 BASESYSCONFDIR ?=	/etc
@@ -16,22 +15,19 @@ EXAMPLESDIR ?=	${PREFIX}/share/examples/${GH_PROJECT}
 
 EGRESS =	vio0
 
-MASTER =	yes
 DOMAIN_NAME =	example.com
 
+MASTER =	yes
 MASTER_HOST =	dot
-MASTER_IPv4 =	203.0.113.3
-MASTER_IPv6 =	2001:0db8::3
 
-SLAVE_HOST =	dig
-SLAVE_IPv4 =	203.0.113.4
-SLAVE_IPv6 =	2001:0db8::4
+IPv4 =		203.0.113.3
+IPv6 =		2001:0db8::3
 
 UPGRADE =	yes
 
 DITHEMATIC =	${SCRIPT} ${SYSCONF} ${PFCONF} ${AUTHPFCONF} ${MAILCONF} \
-		${PDNSCONF} ${SSHCONF} ${MTREECONF} ${NSDCONF} ${FREECONF} \
-		${UNBOUNDCONF} ${CRONALLOW} ${CRONTAB} ${DOC}
+		${PDNSCONF} ${SSHCONF} ${MTREECONF} ${NSDCONF} ${UNBOUNDCONF} \
+		${CRONALLOW} ${CRONTAB} ${DOC} ${EXAMPLES}
 
 # Dithematic
 
@@ -76,36 +72,35 @@ SSHCONF =	${BASESYSCONFDIR:S|^/||}/ssh/sshd_banner \
 
 MTREECONF =	${BASESYSCONFDIR:S|^/||}/mtree/special.local
 
-NSDCONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.master.PowerDNS \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.master.${DOMAIN_NAME} \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.PowerDNS \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.${DOMAIN_NAME} \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.zone.${DOMAIN_NAME}
-
-FREECONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.1984.is \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.FreeDNS.afraid.org \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.GratisDNS.com \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.HE.net \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.PowerDNS \
-		${VARBASE:S|^/||}/nsd/etc/nsd.conf.slave.Puck.nether.net
+NSDCONF =	${VARBASE:S|^/||}/nsd/etc/nsd.conf
 
 UNBOUNDCONF =	${VARBASE:S|^/||}/unbound/etc/unbound.conf
 
 CRONALLOW =	${VARBASE:S|^/||}/cron/cron.allow
 CRONTAB =	${VARBASE:S|^/||}/cron/tabs/root
 
-DOC =		${DOCDIR:S|^/||}/validate.tsig
-EXAMPLES =	${VARBASE:S|^/||}/nsd/etc/*.example.com \
-		${EXAMPLESDIR:S|^/||}/*example.com.zone
+DOC =		${DOCDIR:S|^/||}/validate.tsig \
+		${DOCDIR:S|^/||}/nsd.conf.master.PowerDNS \
+		${DOCDIR:S|^/||}/nsd.conf.slave.PowerDNS \
+		${DOCDIR:S|^/||}/nsd.conf.slave.1984.is \
+		${DOCDIR:S|^/||}/nsd.conf.slave.FreeDNS.afraid.org \
+		${DOCDIR:S|^/||}/nsd.conf.slave.GratisDNS.com \
+		${DOCDIR:S|^/||}/nsd.conf.slave.HE.net \
+		${DOCDIR:S|^/||}/nsd.conf.slave.Puck.nether.net
 
-HOSTNAME !!=	hostname
-WRKSRC ?=	${HOSTNAME:S|^|${.CURDIR}/|}
-RELEASE !!=	uname -r
+EXAMPLES =	${EXAMPLESDIR:S|^/||}/ddns.example.com.zone \
+		${EXAMPLESDIR:S|^/||}/example.com.zone \
+		${EXAMPLESDIR:S|^/||}/nsd.conf.master.example.com \
+		${EXAMPLESDIR:S|^/||}/nsd.conf.slave.example.com \
+		${EXAMPLESDIR:S|^/||}/nsd.conf.zone.example.com
 
 PKG =		powerdns \
 		ldns-utils \
 		drill
+
+HOSTNAME !!=	hostname -s
+WRKSRC ?=	${HOSTNAME:S|^|${.CURDIR}/|}
+RELEASE !!=	uname -r
 
 #-8<-----------	[ cut here ] --------------------------------------------------^
 
@@ -113,11 +108,11 @@ PKG =		powerdns \
 . include "Makefile.local"
 .endif
 
-# Specifications (target rules)
-
 .if ${MASTER} == "yes"
 SYSCONF +=	${BASESYSCONFDIR:S|^/||}/weekly.local
 .endif
+
+# Specifications (target rules)
 
 .if defined(UPGRADE) && ${UPGRADE} == "yes"
 upgrade: config .WAIT ${DITHEMATIC}
@@ -130,44 +125,42 @@ upgrade: config
 config:
 	mkdir -m750 ${WRKSRC}
 	(umask 077; cp -R ${.CURDIR}/src/* ${WRKSRC})
-	find ${WRKSRC} -type f -exec sed -i \
-		-e 's|vio0|${EGRESS}|g' \
-		-e 's|example.com|${DOMAIN_NAME}|g' \
-		-e 's|dot|${MASTER_HOST}|g' \
-		-e 's|203.0.113.3|${MASTER_IPv4}|g' \
-		-e 's|2001:0db8::3|${MASTER_IPv6}|g' \
-		-e 's|dig|${SLAVE_HOST}|g' \
-		-e 's|203.0.113.4|${SLAVE_IPv4}|g' \
-		-e 's|2001:0db8::4|${SLAVE_IPv6}|g' \
-		{} +
-.if ${MASTER} != "yes"
+	sed -i \
+		's|vio0|${EGRESS}|' \
+		${WRKSRC}/${PFCONF:M*pf.conf}
+	sed -i \
+		's|example.com|${DOMAIN_NAME}|' \
+		${SYSCONF:M*doas.conf:S|^|${WRKSRC}/|} \
+		${PFCONF:M*pf.conf.table.dns:S|^|${WRKSRC}/|} \
+		${AUTHPFCONF:M*authpf.problem:S|^|${WRKSRC}/|} \
+		${MAILCONF:M*smtpd.conf:S|^|${WRKSRC}/|} \
+		${PDNSCONF:M*pdns.conf:S|^|${WRKSRC}/|} \
+		${SSHCONF:M*sshd_config:S|^|${WRKSRC}/|} \
+		${MTREECONF:M*special.local:S|^|${WRKSRC}/|} \
+		${NSDCONF:M*nsd.conf:S|^|${WRKSRC}/|} \
+		${DOC:M*nsd.conf.*.PowerDNS:S|^|${WRKSRC}/|}
+	sed -i \
+		's|dot|${MASTER_HOST}|' \
+		${PDNSCONF:M*pdns.conf:S|^|${WRKSRC}/|}
+	sed -i \
+		-e 's|203.0.113.3|${IPv4}|' \
+		-e 's|2001:0db8::3|${IPv6}|' \
+		${NSDCONF:M*nsd.conf:S|^|${WRKSRC}/|}
+	sed -i \
+		's|dot|${HOSTNAME}|' \
+		${MAILCONF:M*smtpd.conf:S|^|${WRKSRC}/|} \
+		${MTREECONF:M*special.local:S|^|${WRKSRC}/|}
+.if ${MASTER} == "yes"
+	sed -i \
+		's|example.com|${DOMAIN_NAME}|' \
+		${SYSCONF:M*weekly.local:S|^|${WRKSRC}/|}
+	@echo Super-Master
+.else
 	sed -i \
 		-e 's|^master=yes|#master=yes|' \
 		-e 's|^#slave=yes|slave=yes|' \
-		${WRKSRC}/${PDNSCONF:M*pdns.conf}
-	sed -i \
-		-e 's|${SLAVE_HOST}|${MASTER_HOST}|g' \
-		${WRKSRC}/${SCRIPT:M*tsig-share}
-	sed -i \
-		-e 's|${MASTER_IPv4}|${SLAVE_IPv4}|g' \
-		-e 's|${MASTER_IPv6}|${SLAVE_IPv6}|g' \
-		${WRKSRC}/${NSDCONF:M*nsd.conf}
-	sed -i \
-		-e '/slave\.PowerDNS/s|^#||' \
-		-e '/master\.${DOMAIN_NAME}/s|^#||' \
-		-e '/master\.PowerDNS/s|^|#|' \
-		-e '/slave\.${DOMAIN_NAME}/s|^|#|' \
-		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.example.com \
-		${WRKSRC}${VARBASE}/nsd/etc/nsd.conf.zone.ddns.example.com
+		${PDNSCONF:M*pdns.conf:S|^|${WRKSRC}/|}
 	@echo Super-Slave
-.else
-	@echo Super-Master
-.endif
-.if ${DOMAIN_NAME} != "example.com"
-. for _NSDCONF in ${NSDCONF:N*nsd.conf:N*.PowerDNS}
-	cp -p ${_NSDCONF:S|${DOMAIN_NAME}|example.com|:S|^|${WRKSRC}/|} \
-		${_NSDCONF:S|^|${WRKSRC}/|}
-. endfor
 .endif
 	@echo Configured
 
@@ -199,8 +192,6 @@ beforeinstall: upgrade
 realinstall:
 	${INSTALL} -d -m ${DIRMODE} ${DOCDIR}
 	${INSTALL} -d -m ${DIRMODE} ${EXAMPLESDIR}
-	${INSTALL} -S -o ${DOCOWN} -g ${DOCGRP} -m ${DOCMODE} \
-		${EXAMPLES:S|^|${.CURDIR}/src/|} ${EXAMPLESDIR}
 .for _DITHEMATIC in ${DITHEMATIC:N*cron/tabs*}
 	${INSTALL} -S -o ${LOCALEOWN} -g ${LOCALEGRP} -m 440 \
 		${_DITHEMATIC:S|^|${WRKSRC}/|} \
@@ -219,6 +210,9 @@ afterinstall:
 	[[ -r ${VARBASE}/pdns/pdns.sqlite ]] \
 		|| sqlite3 ${VARBASE}/pdns/pdns.sqlite \
 			-init ${PREFIX}/share/doc/pdns/schema.sqlite3.sql ".exit"
+	[[ -r ${VARBASE}/pdns/pdnssec.sqlite ]] \
+		|| sqlite3 ${VARBASE}/pdns/pdnssec.sqlite \
+			-init ${PREFIX}/share/doc/pdns/dnssec-3.x_to_3.4.0_schema.sqlite3.sql ".exit"
 	group info -e tsig || user info -e tsig \
 		|| { user add -u 25353 -g =uid -c "TSIG Wizard" -s /bin/ksh -m tsig; \
 			mkdir -m700 /home/tsig/.key; chown tsig:tsig /home/tsig/.key; }

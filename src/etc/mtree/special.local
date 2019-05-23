@@ -117,12 +117,29 @@ doc		type=dir mode=0755
 
 # ./usr/local/share/doc/dithematic
 dithematic	type=dir mode=0755
+    nsd.conf.*	mode=0644
     validate.tsig \
 		mode=0644
 # ./usr/local/share/doc/dithematic
 ..
 
 # ./usr/local/share/doc
+..
+
+
+# ./usr/local/share/examples
+examples	type=dir mode=0755
+
+# ./usr/local/share/examples/dithematic
+dithematic	type=dir mode=0755
+    *example.com.zone \
+		mode=0644
+    nsd.conf.*.example.com \
+		mode=0644
+# ./usr/local/share/examples/dithematic
+..
+
+# ./usr/local/share/examples
 ..
 
 # ./usr/local/share

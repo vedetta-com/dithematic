@@ -10,7 +10,7 @@ set -o nounset
 KEY_DIR="${KEY_DIR:-/etc/ssl/dns}"
 ZONE_DIR="${ZONE_DIR:-/var/nsd/zones/master}"
 DB_DIR="${DB_DIR:-/var/pdns}"
-PDNS_DB="pdns.sqlite"
+PDNS_DB="pdns.sqlite pdnssec.sqlite"
 
 mkdir -p ${KEY_DIR}/private
 chmod 755 ${KEY_DIR}
