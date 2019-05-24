@@ -74,8 +74,13 @@ FREE_SLAVE="${FREE_SLAVE:-\
 
 Install DNS zone(s), e.g. on master: `example.com` and `ddns.example.com`
 ```sh
-env zoneadd example.com
+zoneadd example.com
 env DDNS=true zoneadd ddns.example.com
+```
+
+Edit a zone
+```sh
+env EDITOR="${EDITOR:-vi}" pdnsutil edit-zone example.com
 ```
 
 *n.b.* place existing TSIG key as `tsig.example.com`, CSK (or ZSK) as `example.com.CSK` in `/etc/ssl/dns/private` (or let [`zoneadd`](src/usr/local/bin/zoneadd) generate new keys.)
@@ -109,12 +114,12 @@ user add -L authpf -G authdns -c "DDNS user" -s /sbin/nologin -m puffy
 ```
 
 Edit ["smtpd.conf"](src/etc/mail/smtpd.conf) and "secrets"
+
 Edit pf table ["msa"](src/etc/pf.conf.table.msa) to add Message Submission Agent IP(s)
 
-Enjoy:
+Enjoy
 ```sh
-rcctl enable nsd pdns_server
-rcctl restart nsd pdns_server
+dig example.com any
 ```
 
 ## Support
