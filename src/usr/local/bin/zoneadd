@@ -157,26 +157,27 @@ pdnsutil list-zone ${ZONE_NAME} && exit 1
 
 # DNSSEC
 #
-[ -r ${KEY_DIR}/private/${CSK} ] ||
- (umask 077; pdnsutil generate-zone-key KSK ecdsa256 | sed '/Flags/d' \
-  > ${KEY_DIR}/private/${CSK})
-
-# (!) We should check salt on slave
-pdnsutil set-nsec3 ${ZONE_NAME} "1 0 333 $(nsec3salt)" inclusive
-pdnsutil import-zone-key ${ZONE_NAME} ${KEY_DIR}/private/${CSK}
-local \
- _id=$(pdnsutil list-keys ${ZONE_NAME} | awk -v name=${ZONE_NAME} '$0 ~ name { print $5 }')
-pdnsutil activate-zone-key ${ZONE_NAME} "${_id}"
+if "${MASTER}"
+ then
+  [ -r ${KEY_DIR}/private/${CSK} ] ||
+   (umask 077; pdnsutil generate-zone-key KSK ecdsa256 | sed '/Flags/d' \
+    > ${KEY_DIR}/private/${CSK})
+  pdnsutil set-nsec3 ${ZONE_NAME} "1 0 333 $(nsec3salt)" inclusive
+  pdnsutil import-zone-key ${ZONE_NAME} ${KEY_DIR}/private/${CSK}
+  local \
+   _id=$(pdnsutil list-keys ${ZONE_NAME} | awk -v name=${ZONE_NAME} '$0 ~ name { print $5 }')
+  pdnsutil activate-zone-key ${ZONE_NAME} "${_id}"
+fi
 
 # TSIG
 #
-if [ ${ZONE_NAME} = ${DOMAIN} ]
+if [ "${ZONE_NAME}" = "${DOMAIN}" -a "${MASTER}" ]
  then
   [ -r ${KEY_DIR}/private/${KEY_NAME} ] || tsig-secret ${KEY_NAME}
   tsig-change ${KEY_NAME}
 fi
 
-if ${DDNS}
+if [ "${DDNS}" -a "${MASTER}" ]
  then
   [ -r ${KEY_DIR}/private/${KEY_NAME} ] || tsig-secret ${KEY_NAME}
   pdnsutil import-tsig-key \
@@ -204,10 +205,12 @@ pdnsutil set-meta ${ZONE_NAME} SOA-EDIT-DNSUPDATE SOA-EDIT-INCREASE
 
 # Finish
 #
-pdnsutil export-zone-dnskey ${ZONE_NAME} "${_id}" > ${KEY_DIR}/${DNSKEY}
-echo Send the DNSKEY to registrar:
-cat ${KEY_DIR}/${DNSKEY}
-
+if "${MASTER}"
+ then
+  pdnsutil export-zone-dnskey ${ZONE_NAME} "${_id}" > ${KEY_DIR}/${DNSKEY}
+  echo Send the DNSKEY to registrar:
+  cat ${KEY_DIR}/${DNSKEY}
+fi
 pdnsutil rectify-zone ${ZONE_NAME}
 env EDITOR="${EDITOR:-vi}" pdnsutil edit-zone ${ZONE_NAME}
 
