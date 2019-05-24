@@ -136,7 +136,6 @@ config:
 		${MAILCONF:M*smtpd.conf:S|^|${WRKSRC}/|} \
 		${PDNSCONF:M*pdns.conf:S|^|${WRKSRC}/|} \
 		${SSHCONF:M*sshd_config:S|^|${WRKSRC}/|} \
-		${MTREECONF:M*special.local:S|^|${WRKSRC}/|} \
 		${NSDCONF:M*nsd.conf:S|^|${WRKSRC}/|} \
 		${DOC:M*nsd.conf.*.PowerDNS:S|^|${WRKSRC}/|}
 	sed -i \
