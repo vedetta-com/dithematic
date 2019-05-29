@@ -176,7 +176,7 @@ clean:
 	@rm -r ${WRKSRC}
 
 beforeinstall: upgrade
-	rcctl stop nsd pdns_server || [[ "$$?" -eq 1 ]]
+	-rcctl stop nsd pdns_server
 .for _PKG in ${PKG}
 	env PKG_PATH= pkg_info ${_PKG} > /dev/null || pkg_add ${_PKG}
 .endfor
