@@ -1,3 +1,5 @@
 next_part "TSIG Wizard:"
-tsig-secret tsig.example.com && tsig-change tsig.example.com && tsig-share tsig.example.com
+/usr/local/bin/tsig-secret tsig.example.com
+/usr/local/bin/tsig-change tsig.example.com
+/usr/local/bin/tsig-share tsig.example.com
 
