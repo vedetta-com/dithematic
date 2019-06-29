@@ -18,7 +18,7 @@ umask 137
 [ -r ${KEY_DIR}/private/${KEY_NAME} ]
 
 # PowerDNS
-pdnsutil import-tsig-key \
+/usr/local/bin/pdnsutil import-tsig-key \
   ${KEY_NAME} ${KEY_HMAC} $(cat ${KEY_DIR}/private/${KEY_NAME})
 
 # NSD
