@@ -199,6 +199,7 @@ if "${MASTER}"
   fi
  else
   pdnsutil set-kind ${ZONE_NAME} slave
+  pdnsutil change-slave-zone-master ${ZONE_NAME} 127.0.0.1:10053 [::1]:10053
   pdnsutil unset-presigned ${ZONE_NAME}
 fi
 pdnsutil set-meta ${ZONE_NAME} SOA-EDIT-DNSUPDATE SOA-EDIT-INCREASE
