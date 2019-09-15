@@ -9,5 +9,8 @@ if [ -O /etc/mtree/special.local -a \
 	mtree -e -p / -f /etc/mtree/special.local
 fi
 
+next_part "Checking packages:"
+pkg_add -su
+
 next_part "DNS statistics:"
 unbound-control stats
